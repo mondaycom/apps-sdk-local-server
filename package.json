@@ -1,0 +1,74 @@
+{
+  "name": "apps-sdk-local-server",
+  "version": "1.0.0",
+  "description": "A local server to support the `apps-sdk` package local development",
+  "main": "./dist/app.js",
+  "keywords": [
+    "monday",
+    "monday.com",
+    "monday",
+    "apps",
+    "monday-apps",
+    "monday-code",
+    "apps"
+  ],
+  "author": "monday.com Apps Team",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mondaycom/apps-sdk-local-server.git"
+  },
+  "engines": {
+    "node": ">= 20.11.0"
+  },
+  "license": "MIT",
+  "scripts": {
+    "start": "node ./dist/src/app.js",
+    "dev": "tsc-watch -p tsconfig.build.json --onSuccess 'npm run start-with-debugger'",
+    "start-with-debugger": "npm run start-tsc-alias && node --inspect=0.0.0.0:9229 ./dist/src/app.js | node scripts/log-filter | bunyan --color -o short",
+    "start-tsc-alias": "tsc-alias -f -p tsconfig.build.json",
+    "test": "NODE_ENV=test jest --forceExit",
+    "test:coverage": "npm run test -- --coverage",
+    "transpile": "rm -rf ./dist && tsc -p tsconfig.build.json && tsc-alias -f -p tsconfig.build.json",
+    "lint": "eslint --ext .js,.ts src",
+    "lint:fix": "npm run lint -- --fix",
+    "prettier:fix": "prettier --write .",
+    "prettier:check": "prettier --check .",
+    "circular-dependency-check": "madge -c .",
+    "prepare": "husky install"
+  },
+  "dependencies": {
+    "app-root-path": "^3.1.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.3",
+    "express-async-errors": "^3.1.1",
+    "http-status-codes": "^2.3.0",
+    "jsonwebtoken": "^9.0.2",
+    "node-fetch": "^3.3.2",
+    "pino": "^8.19.0",
+    "pino-pretty": "^10.3.1",
+    "toad-scheduler": "^3.0.1",
+    "uuid": "^9.0.1",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.12",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/uuid": "^9.0.8",
+    "@typescript-eslint/eslint-plugin": "^7.1.1",
+    "@typescript-eslint/parser": "^7.1.1",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-import-resolver-typescript": "^3.6.1",
+    "eslint-plugin-import": "^2.29.1",
+    "husky": "^9.0.11",
+    "jest": "^29.7.0",
+    "madge": "^6.1.0",
+    "prettier": "^3.2.5",
+    "ts-jest": "^29.1.2",
+    "tsc-alias": "^1.8.8",
+    "tsx": "^4.7.1",
+    "typescript": "^5.3.3"
+  }
+}
