@@ -1,54 +1,63 @@
-import { StatusCodes } from 'http-status-codes';
+import { SuccessResponse } from '@tsoa/runtime';
+import { ReasonPhrases, StatusCodes } from 'http-status-codes';
+import { Body, Delete, Get, Path, Put, Request, Route, Tags } from 'tsoa';
 
 import { MONDAY_ACCESS_TOKEN_HEADER_KEY } from 'domain/storage/storage.consts';
-import { validateZodSchema } from 'middlewares/schema-validation.middleware';
 import { getTokenFromHeader } from 'utils/requests';
 
-import {
-  counterIncrementRequestSchema,
-  deleteValueRequestSchema,
-  getValueRequestSchema,
-  updateValueRequestSchema
-} from './storage.schema';
 import { StorageService } from './storage.service';
 
-export const getValue = validateZodSchema(getValueRequestSchema, async (req, res) => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
-  const token = getTokenFromHeader(req, MONDAY_ACCESS_TOKEN_HEADER_KEY);
-  const { key } = req.params;
-  const storageService = new StorageService(token);
-  const { value, version } = await storageService.get(key);
-  return res.status(StatusCodes.OK).json({ value, version });
-});
+import type { IncrementStorageForKeyRequestBody, SetStorageForKeyRequestBody } from 'domain/storage/storage.types';
+import type { Request as ExpressRequest } from 'express';
+import type { JsonValue } from 'types/general.type';
 
-export const deleteValue = validateZodSchema(deleteValueRequestSchema, async (req, res) => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
-  const token = getTokenFromHeader(req, MONDAY_ACCESS_TOKEN_HEADER_KEY);
-  const { key } = req.params;
-  const storageService = new StorageService(token);
-  await storageService.delete(key);
-  return res.status(StatusCodes.NO_CONTENT).send();
-});
+@Route('storage')
+@Tags('Storage')
+export class StorageController {
+  @Get(':key')
+  @SuccessResponse(StatusCodes.OK, ReasonPhrases.OK)
+  public async getValue(
+    @Request() req: ExpressRequest,
+    @Path() key: string
+  ): Promise<{ value: JsonValue; version?: string }> {
+    const token = getTokenFromHeader(req, MONDAY_ACCESS_TOKEN_HEADER_KEY);
+    const storageService = new StorageService(token);
+    const { value, version } = await storageService.get(key);
+    return { value, version };
+  }
 
-export const updateValue = validateZodSchema(updateValueRequestSchema, async (req, res) => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
-  const token = getTokenFromHeader(req, MONDAY_ACCESS_TOKEN_HEADER_KEY);
-  const { key } = req.params;
-  const { value, previousVersion, shared } = req.body;
-  const storageService = new StorageService(token);
-  await storageService.set(key, value, { previousVersion, shared });
-  return res.status(StatusCodes.OK).json(value);
-});
+  @Delete(':key')
+  @SuccessResponse(StatusCodes.NO_CONTENT, ReasonPhrases.NO_CONTENT)
+  public async deleteValue(@Request() req: ExpressRequest, @Path() key: string): Promise<void> {
+    const token = getTokenFromHeader(req, MONDAY_ACCESS_TOKEN_HEADER_KEY);
+    const storageService = new StorageService(token);
+    await storageService.delete(key);
+  }
 
-export const counterIncrement = validateZodSchema(counterIncrementRequestSchema, async (req, res) => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
-  const token = getTokenFromHeader(req, MONDAY_ACCESS_TOKEN_HEADER_KEY);
-  const { period, incrementBy, renewalDate, kind } = req.body;
-  const storageService = new StorageService(token);
-  const value = await storageService.incrementCounter(period, { incrementBy, kind, renewalDate });
-  return res.status(StatusCodes.OK).json(value?.newCounterValue?.toString());
-});
+  @Put(':key')
+  @SuccessResponse(StatusCodes.OK, ReasonPhrases.OK)
+  public async updateValue(
+    @Request() req: ExpressRequest,
+    @Path() key: string,
+    @Body() body: SetStorageForKeyRequestBody
+  ): Promise<JsonValue> {
+    const token = getTokenFromHeader(req, MONDAY_ACCESS_TOKEN_HEADER_KEY);
+    const { value, previousVersion, shared } = body;
+    const storageService = new StorageService(token);
+    await storageService.set(key, value, { previousVersion, shared });
+    return value;
+  }
+
+  @Put('counter/increment')
+  @SuccessResponse(StatusCodes.OK, ReasonPhrases.OK)
+  public async counterIncrement(
+    @Request() req: ExpressRequest,
+    @Body() body: IncrementStorageForKeyRequestBody
+  ): Promise<string | undefined> {
+    const token = getTokenFromHeader(req, MONDAY_ACCESS_TOKEN_HEADER_KEY);
+    const { period, incrementBy, renewalDate, kind } = body;
+    const storageService = new StorageService(token);
+    const value = await storageService.incrementCounter(period, { incrementBy, kind, renewalDate });
+    return value?.newCounterValue?.toString();
+  }
+}

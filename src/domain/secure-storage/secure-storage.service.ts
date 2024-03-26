@@ -6,24 +6,28 @@ import { SECURE_STORAGE_FILE } from './secure-storage.consts';
 
 import type { JsonValue } from 'types/general.type';
 
-const storage = initDb(SECURE_STORAGE_FILE);
+const secureStorage = initDb(SECURE_STORAGE_FILE);
 
-export const getSecureValue = (key: string) => {
-  const encryptedValue = storage.get<string>(key);
+export class SecureStorageService {
+  static getSecureValue(key: string) {
+    const encryptedValue = secureStorage.get<string>(key);
 
-  if (!isDefined(encryptedValue)) {
-    return null;
+    if (!isDefined(encryptedValue)) {
+      return null;
+    }
+
+    const stringifiedValue = decrypt(encryptedValue);
+    const valueAsObject = JSON.parse(stringifiedValue);
+    return valueAsObject as JsonValue;
   }
 
-  const stringifiedValue = decrypt(encryptedValue);
-  const valueAsObject = JSON.parse(stringifiedValue);
-  return valueAsObject as JsonValue;
-};
-export const deleteSecureValue = (key: string) => {
-  storage.delete(key);
-};
-export const setSecureValue = (key: string, value: JsonValue) => {
-  const stringifiedValue = JSON.stringify(value);
-  const encryptedValue = encrypt(stringifiedValue);
-  storage.set(key, encryptedValue);
-};
+  static deleteSecureValue(key: string) {
+    secureStorage.delete(key);
+  }
+
+  static setSecureValue(key: string, value: JsonValue) {
+    const stringifiedValue = JSON.stringify(value);
+    const encryptedValue = encrypt(stringifiedValue);
+    secureStorage.set(key, encryptedValue);
+  }
+}

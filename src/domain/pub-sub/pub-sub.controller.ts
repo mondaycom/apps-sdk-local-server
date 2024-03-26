@@ -1,20 +1,29 @@
-import { StatusCodes } from 'http-status-codes';
+import { Post, SuccessResponse } from '@tsoa/runtime';
+import { ReasonPhrases, StatusCodes } from 'http-status-codes';
+import { Body, Route, Tags } from 'tsoa';
 
-import { validateZodSchema } from 'middlewares/schema-validation.middleware';
+import { PubSubService } from './pub-sub.service';
 
-import { queueRequestSchema, validateSecretRequestSchema } from './pub-sub.schema';
-import * as PubSubService from './pub-sub.service';
+import type { QueueRequestBody, ValidateSecretRequestBody } from 'domain/pub-sub/pub-sub.types';
 
-export const queue = validateZodSchema(queueRequestSchema, (req, res) => {
-  const { message } = req.body;
-  const id = PubSubService.publishMessage(message);
+@Route('pub-sub')
+@Tags('PubSub')
+export class PubSubController {
+  @Post('queue')
+  @SuccessResponse(StatusCodes.OK, ReasonPhrases.OK)
+  public queue(@Body() body: QueueRequestBody) {
+    const { message } = body;
+    const id = PubSubService.publishMessage(message);
 
-  return res.status(StatusCodes.OK).json({ id });
-});
+    return { id };
+  }
 
-export const validateSecret = validateZodSchema(validateSecretRequestSchema, (req, res) => {
-  const { secret } = req.body;
-  const valid = PubSubService.validateSecret(secret);
+  @Post('validate-secret')
+  @SuccessResponse(StatusCodes.OK, ReasonPhrases.OK)
+  public validateSecret(@Body() body: ValidateSecretRequestBody) {
+    const { secret } = body;
+    const valid = PubSubService.validateSecret(secret);
 
-  return res.status(StatusCodes.OK).json({ valid });
-});
+    return { valid };
+  }
+}

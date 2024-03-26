@@ -6,7 +6,7 @@ import { InternalServerError } from 'errors/index';
 import { isDefined } from 'types/type-guards';
 import { Logger } from 'utils/logger';
 
-import type { JsonValue } from 'types/general.type';
+import type { JsonValue } from 'shared/types/general.type';
 
 const logger = new Logger('storage');
 

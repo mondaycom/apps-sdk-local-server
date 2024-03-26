@@ -37,6 +37,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@tsoa/runtime": "^6.1.5",
     "app-root-path": "^3.1.0",
     "cors": "^2.8.5",
     "express": "^4.18.3",
@@ -47,6 +48,7 @@
     "pino": "^8.19.0",
     "pino-pretty": "^10.3.1",
     "toad-scheduler": "^3.0.1",
+    "tsoa": "^6.1.5",
     "uuid": "^9.0.1",
     "zod": "^3.22.4"
   },

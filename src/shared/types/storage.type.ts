@@ -1,5 +1,5 @@
 import type { RequestInit } from 'node-fetch';
-import type { JsonValue } from 'types/general.type';
+import type { JsonValue } from 'shared/types/general.type';
 
 export type IStorageInstance = {
   set: <T extends JsonValue>(

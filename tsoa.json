@@ -1,0 +1,34 @@
+{
+  "entryFile": "src/app.ts",
+  "noImplicitAdditionalProperties": "throw-on-extras",
+  "controllerPathGlobs": ["src/domain/**/*.controller.ts"],
+  "spec": {
+    "outputDirectory": "./build",
+    "specVersion": 3,
+    "spec": {
+      "servers": [
+        {
+          "url": "http://localhost:59595",
+          "description": "monday-code Local dev server"
+        }
+      ]
+    },
+    "yaml": true
+  },
+  "compilerOptions": {
+    "paths": {
+      "src/*": ["./src/*"],
+      "domain/*": ["./src/domain/*"],
+      "routes/*": ["./src/routes/*"],
+      "shared/*": ["./src/shared/*"],
+      "types/*": ["./src/shared/types/*"],
+      "errors/*": ["./src/shared/errors/*"],
+      "utils/*": ["./src/shared/utils/*"],
+      "middlewares/*": ["./src/shared/middlewares/*"],
+      "managers/*": ["./src/managers/*"]
+    }
+  },
+  "routes": {
+    "routesDir": "./src"
+  }
+}

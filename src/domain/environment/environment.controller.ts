@@ -1,22 +1,16 @@
-import { StatusCodes } from 'http-status-codes';
+import { SuccessResponse } from '@tsoa/runtime';
+import { ReasonPhrases, StatusCodes } from 'http-status-codes';
+import { Get, Path, Route, Tags } from 'tsoa';
 
-import {
-  getEnvironmentForKeyRequestSchema,
-  setEnvironmentForKeyRequestSchema
-} from 'domain/environment/environment.schema';
-import { validateZodSchema } from 'middlewares/schema-validation.middleware';
+import { EnvironmentService } from './environment.service';
 
-import * as EnvironmentService from './environment.service';
-
-export const getEnvironmentForKey = validateZodSchema(getEnvironmentForKeyRequestSchema, (req, res) => {
-  const { key } = req.params;
-  const value = EnvironmentService.getEnvironmentForKey(key);
-  return res.status(StatusCodes.OK).json(value);
-});
-
-export const setEnvironmentForKey = validateZodSchema(setEnvironmentForKeyRequestSchema, (req, res) => {
-  const { key } = req.params;
-  const { value } = req.body;
-  EnvironmentService.setEnvironmentForKey(key, value);
-  return res.status(StatusCodes.NO_CONTENT).send();
-});
+@Route('environments')
+@Tags('Environment')
+export class EnvironmentController {
+  @Get(':key')
+  @SuccessResponse(StatusCodes.OK, ReasonPhrases.OK)
+  public async getEnvironmentForKey(@Path() key: string): Promise<unknown> {
+    const value = EnvironmentService.getEnvironmentForKey(key);
+    return value;
+  }
+}

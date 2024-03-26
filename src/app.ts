@@ -9,7 +9,7 @@ import { notFoundHandler } from 'middlewares/not-found.middleware';
 import { PORT } from 'shared/config';
 import { Logger } from 'utils/logger';
 
-import { router } from './routes';
+import { RegisterRoutes } from './routes';
 
 const logger = new Logger('app');
 
@@ -18,7 +18,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(router);
+
+RegisterRoutes(app);
+app.use('/docs', express.static('build'));
+
 app.use(notFoundHandler);
 app.use(errorHandler);
 

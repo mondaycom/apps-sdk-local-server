@@ -1,19 +1,15 @@
-import { StatusCodes } from 'http-status-codes';
+import { SuccessResponse } from '@tsoa/runtime';
+import { ReasonPhrases, StatusCodes } from 'http-status-codes';
+import { Get, Path, Route, Tags } from 'tsoa';
 
-import { validateZodSchema } from 'middlewares/schema-validation.middleware';
+import { SecretService } from './secrets.service';
 
-import { getSecretForKeyRequestSchema, setSecretForKeyRequestSchema } from './secrets.schema';
-import * as SecretService from './secrets.service';
-
-export const getSecretForKey = validateZodSchema(getSecretForKeyRequestSchema, (req, res) => {
-  const { key } = req.params;
-  const value = SecretService.getSecretForKey(key);
-  return res.status(StatusCodes.OK).json(value);
-});
-
-export const setSecretForKey = validateZodSchema(setSecretForKeyRequestSchema, (req, res) => {
-  const { key } = req.params;
-  const { value } = req.body;
-  SecretService.setSecretForKey(key, value);
-  return res.status(StatusCodes.NO_CONTENT).send();
-});
+@Route('secrets')
+@Tags('Secrets')
+export class SecretsController {
+  @Get(':key')
+  @SuccessResponse(StatusCodes.OK, ReasonPhrases.OK)
+  public getSecretForKey(@Path() key: string): string {
+    return SecretService.getSecretForKey(key);
+  }
+}

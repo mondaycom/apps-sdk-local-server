@@ -90,24 +90,26 @@ const removeJobIdAndSecret = (taskSecret: string) => {
   jobsStore.delete(taskSecret);
 };
 
-export const publishMessage = (message: string) => {
-  validateAppServiceUrl();
-  const { taskId, task } = createNewTask(message);
-  const job = new SimpleIntervalJob({ seconds: PUB_SUB_RETRY_INTERVAL_IN_SECONDS }, task, {
-    id: taskId,
-    preventOverrun: true
-  });
+export class PubSubService {
+  static publishMessage(message: string) {
+    validateAppServiceUrl();
+    const { taskId, task } = createNewTask(message);
+    const job = new SimpleIntervalJob({ seconds: PUB_SUB_RETRY_INTERVAL_IN_SECONDS }, task, {
+      id: taskId,
+      preventOverrun: true
+    });
 
-  scheduler.addSimpleIntervalJob(job);
-  return taskId;
-};
-
-export const validateSecret = (secret: string) => {
-  validateAppServiceUrl();
-  try {
-    getTaskData(secret);
-    return true;
-  } catch (error) {
-    return false;
+    scheduler.addSimpleIntervalJob(job);
+    return taskId;
   }
-};
+
+  static validateSecret(secret: string) {
+    validateAppServiceUrl();
+    try {
+      getTaskData(secret);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+}
