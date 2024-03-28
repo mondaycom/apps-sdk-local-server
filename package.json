@@ -1,6 +1,7 @@
 {
   "name": "apps-sdk-local-server",
   "version": "1.0.0",
+  "type": "module",
   "description": "A local server to support the `apps-sdk` package local development",
   "main": "./dist/app.js",
   "keywords": [
@@ -29,6 +30,7 @@
     "test": "NODE_ENV=test jest --forceExit",
     "test:coverage": "npm run test -- --coverage",
     "transpile": "rm -rf ./dist && tsc -p tsconfig.build.json && tsc-alias -f -p tsconfig.build.json",
+    "build": "tsoa spec-and-routes && npm run transpile",
     "lint": "eslint --ext .js,.ts src",
     "lint:fix": "npm run lint -- --fix",
     "prettier:fix": "prettier --write .",
@@ -47,9 +49,12 @@
     "node-fetch": "^3.3.2",
     "pino": "^8.19.0",
     "pino-pretty": "^10.3.1",
+    "swagger-ui-express": "^5.0.0",
     "toad-scheduler": "^3.0.1",
+    "tslib": "^2.6.2",
     "tsoa": "^6.1.5",
     "uuid": "^9.0.1",
+    "yamljs": "^0.3.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
@@ -57,7 +62,9 @@
     "@types/express": "^4.17.21",
     "@types/jest": "^29.5.12",
     "@types/jsonwebtoken": "^9.0.6",
+    "@types/swagger-ui-express": "^4.1.6",
     "@types/uuid": "^9.0.8",
+    "@types/yamljs": "^0.2.34",
     "@typescript-eslint/eslint-plugin": "^7.1.1",
     "@typescript-eslint/parser": "^7.1.1",
     "eslint": "^8.57.0",

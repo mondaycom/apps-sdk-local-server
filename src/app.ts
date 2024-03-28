@@ -1,8 +1,12 @@
 import 'express-async-errors';
 import http from 'node:http';
+import { join } from 'node:path';
 
+import appRoot from 'app-root-path';
 import cors from 'cors';
 import express from 'express';
+import * as swaggerUI from 'swagger-ui-express';
+import YAML from 'yamljs';
 
 import { errorHandler } from 'middlewares/error.middleware';
 import { notFoundHandler } from 'middlewares/not-found.middleware';
@@ -20,7 +24,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 RegisterRoutes(app);
-app.use('/docs', express.static('build'));
+app.use(
+  ['/openapi', '/docs', '/swagger'],
+  swaggerUI.serve,
+  swaggerUI.setup(YAML.load(join(appRoot.toString(), 'build/swagger.yaml')))
+);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

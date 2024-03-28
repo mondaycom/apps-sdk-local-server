@@ -8,7 +8,7 @@
     "spec": {
       "servers": [
         {
-          "url": "http://localhost:59595",
+          "url": "http://localhost:59999",
           "description": "monday-code Local dev server"
         }
       ]

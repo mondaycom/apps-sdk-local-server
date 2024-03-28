@@ -1,12 +1,25 @@
 import { accessSync, existsSync, constants as fsConstants, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
 
-import { VOLUME_PATH } from 'shared/config';
+import appRoot from 'app-root-path';
+
 import { InternalServerError } from 'shared/errors';
 import { isDefined } from 'types/type-guards';
 
+export const initFileIfNotExists = (filePath: string) => {
+  if (!hasDiskWriteAccess()) {
+    throw new InternalServerError('Missing write permissions');
+  }
+
+  if (!existsSync(filePath)) {
+    writeFileSync(filePath, JSON.stringify({}), { encoding: 'utf8', flag: 'wx' });
+    return;
+  }
+};
+
 export const hasDiskWriteAccess = () => {
+  const rootDir = appRoot.toString();
   try {
-    accessSync(VOLUME_PATH, fsConstants.W_OK);
+    accessSync(rootDir, fsConstants.W_OK);
     return true;
   } catch (_err) {
     return false;

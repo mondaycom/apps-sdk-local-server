@@ -1,4 +1,4 @@
-import { Post, SuccessResponse } from '@tsoa/runtime';
+import { OperationId, Post, SuccessResponse } from '@tsoa/runtime';
 import { ReasonPhrases, StatusCodes } from 'http-status-codes';
 import { Body, Route, Tags } from 'tsoa';
 
@@ -6,10 +6,11 @@ import { PubSubService } from './pub-sub.service';
 
 import type { QueueRequestBody, ValidateSecretRequestBody } from 'domain/pub-sub/pub-sub.types';
 
-@Route('pub-sub')
-@Tags('PubSub')
+@Route('queue')
+@Tags('Queue')
 export class PubSubController {
-  @Post('queue')
+  @Post()
+  @OperationId('publishMessage')
   @SuccessResponse(StatusCodes.OK, ReasonPhrases.OK)
   public queue(@Body() body: QueueRequestBody) {
     const { message } = body;
@@ -19,6 +20,7 @@ export class PubSubController {
   }
 
   @Post('validate-secret')
+  @OperationId('validateSecret')
   @SuccessResponse(StatusCodes.OK, ReasonPhrases.OK)
   public validateSecret(@Body() body: ValidateSecretRequestBody) {
     const { secret } = body;

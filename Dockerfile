@@ -7,7 +7,7 @@ COPY . /private-app
 
 RUN npm install yarn -g && \
     yarn install && \
-    yarn transpile && \
+    yarn build && \
     yarn cache clean && \
     rm -rf .npmrc .git
 
@@ -22,4 +22,4 @@ EXPOSE 59999
 WORKDIR /app
 
 ENTRYPOINT ["/bin/tini", "--"]
-CMD ["node", "./dist/app.js"]
+CMD ["NODE_TLS_REJECT_UNAUTHORIZED=0", "node", "./dist/src/app.js"]

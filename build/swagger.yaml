@@ -13,11 +13,11 @@ components:
           format: double
         - type: boolean
         - items:
-            $ref: '#/components/schemas/JsonValue'
+            $ref: "#/components/schemas/JsonValue"
           type: array
         - properties: {}
           additionalProperties:
-            $ref: '#/components/schemas/JsonValue'
+            $ref: "#/components/schemas/JsonValue"
           type: object
       nullable: true
     SetStorageForKeyRequestBody:
@@ -48,7 +48,7 @@ components:
           type: number
           format: double
         period:
-          $ref: '#/components/schemas/Period'
+          $ref: "#/components/schemas/Period"
       required:
         - kind
         - renewalDate
@@ -98,22 +98,22 @@ components:
     WriteLogRequestBody:
       properties:
         params:
-          $ref: '#/components/schemas/Record_string.unknown_'
+          $ref: "#/components/schemas/Record_string.unknown_"
         error:
           anyOf:
             - type: string
-            - $ref: '#/components/schemas/Record_string.unknown_'
+            - $ref: "#/components/schemas/Record_string.unknown_"
         message:
           type: string
         method:
-          $ref: '#/components/schemas/LogMethods'
+          $ref: "#/components/schemas/LogMethods"
       required:
         - method
       type: object
     SetEnvironmentForKeyRequestBody:
       properties:
         value:
-          $ref: '#/components/schemas/JsonValue'
+          $ref: "#/components/schemas/JsonValue"
       required:
         - value
       type: object
@@ -129,9 +129,9 @@ info:
 paths:
   /storage/{key}:
     get:
-      operationId: GetValue
+      operationId: getByKeyFromStorage
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -140,9 +140,29 @@ paths:
                   version:
                     type: string
                   value:
-                    $ref: '#/components/schemas/JsonValue'
+                    $ref: "#/components/schemas/JsonValue"
                 required:
                   - value
+                type: object
+        "404":
+          description: ""
+          content:
+            application/json:
+              schema:
+                properties:
+                  reason:
+                    type: string
+                required:
+                  - reason
+                type: object
+        "500":
+          description: ""
+          content:
+            application/json:
+              schema:
+                properties:
+                  reason:
+                    type: string
                 type: object
       tags:
         - Storage
@@ -153,33 +173,53 @@ paths:
           required: true
           schema:
             type: string
+        - in: query
+          name: shared
+          required: true
+          schema:
+            type: boolean
+        - in: header
+          name: x-monday-access-token
+          required: true
+          schema:
+            type: string
     delete:
-      operationId: DeleteValue
+      operationId: deleteByKeyFromStorage
       responses:
-        '204':
+        "204":
           description: No Content
       tags:
         - Storage
       security: []
       parameters:
+        - in: header
+          name: x-monday-access-token
+          required: true
+          schema:
+            type: string
         - in: path
           name: key
           required: true
           schema:
             type: string
     put:
-      operationId: UpdateValue
+      operationId: upsertByKeyFromStorage
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/JsonValue'
+                $ref: "#/components/schemas/JsonValue"
       tags:
         - Storage
       security: []
       parameters:
+        - in: header
+          name: x-monday-access-token
+          required: true
+          schema:
+            type: string
         - in: path
           name: key
           required: true
@@ -190,12 +230,12 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SetStorageForKeyRequestBody'
+              $ref: "#/components/schemas/SetStorageForKeyRequestBody"
   /storage/counter/increment:
     put:
-      operationId: CounterIncrement
+      operationId: incrementCounter
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -204,30 +244,46 @@ paths:
       tags:
         - Storage
       security: []
-      parameters: []
+      parameters:
+        - in: header
+          name: x-monday-access-token
+          required: true
+          schema:
+            type: string
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/IncrementStorageForKeyRequestBody'
+              $ref: "#/components/schemas/IncrementStorageForKeyRequestBody"
   /secure-storage/{key}:
     get:
-      operationId: GetSecureValue
+      operationId: getSecureStorage
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 properties:
                   value:
-                    $ref: '#/components/schemas/JsonValue'
+                    $ref: "#/components/schemas/JsonValue"
                 required:
                   - value
                 type: object
+        "404":
+          description: ""
+          content:
+            application/json:
+              schema:
+                properties:
+                  reason:
+                    type: string
+                required:
+                  - reason
+                type: object
       tags:
-        - Secure Storage
+        - SecureStorage
       security: []
       parameters:
         - in: path
@@ -236,12 +292,12 @@ paths:
           schema:
             type: string
     delete:
-      operationId: DeleteSecureValue
+      operationId: deleteSecureStorage
       responses:
-        '204':
+        "204":
           description: No Content
       tags:
-        - Secure Storage
+        - SecureStorage
       security: []
       parameters:
         - in: path
@@ -250,16 +306,16 @@ paths:
           schema:
             type: string
     put:
-      operationId: UpdateSecureValue
+      operationId: putSecureStorage
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: string
       tags:
-        - Secure Storage
+        - SecureStorage
       security: []
       parameters:
         - in: path
@@ -272,38 +328,49 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SetSecureStorageForKeyRequestBody'
-  /secrets/{key}:
+              $ref: "#/components/schemas/SetSecureStorageForKeyRequestBody"
+  /secrets/{name}:
     get:
-      operationId: GetSecretForKey
+      operationId: getSecret
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: string
+        "404":
+          description: ""
+          content:
+            application/json:
+              schema:
+                properties:
+                  reason:
+                    type: string
+                required:
+                  - reason
+                type: object
       tags:
-        - Secrets
+        - Secret
       security: []
       parameters:
         - in: path
-          name: key
+          name: name
           required: true
           schema:
             type: string
-  /test/secrets/{key}:
+  /test/secrets/{name}:
     put:
-      operationId: SetSecretForKey
+      operationId: setSecretTestRoute
       responses:
-        '204':
+        "204":
           description: No Content
       tags:
-        - Test Routes
+        - TestRoutes
       security: []
       parameters:
         - in: path
-          name: key
+          name: name
           required: true
           schema:
             type: string
@@ -312,12 +379,12 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SetSecretForKeyRequestBody'
-  /pub-sub/queue:
+              $ref: "#/components/schemas/SetSecretForKeyRequestBody"
+  /queue:
     post:
-      operationId: Queue
+      operationId: publishMessage
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -329,7 +396,7 @@ paths:
                   - id
                 type: object
       tags:
-        - PubSub
+        - Queue
       security: []
       parameters: []
       requestBody:
@@ -337,12 +404,12 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/QueueRequestBody'
-  /pub-sub/validate-secret:
+              $ref: "#/components/schemas/QueueRequestBody"
+  /queue/validate-secret:
     post:
-      operationId: ValidateSecret
+      operationId: validateSecret
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -354,7 +421,7 @@ paths:
                   - valid
                 type: object
       tags:
-        - PubSub
+        - Queue
       security: []
       parameters: []
       requestBody:
@@ -362,12 +429,12 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ValidateSecretRequestBody'
+              $ref: "#/components/schemas/ValidateSecretRequestBody"
   /logs:
     post:
-      operationId: WriteLog
+      operationId: writeLog
       responses:
-        '204':
+        "204":
           description: No Content
       tags:
         - Logs
@@ -378,37 +445,48 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/WriteLogRequestBody'
-  /environments/{key}:
+              $ref: "#/components/schemas/WriteLogRequestBody"
+  /environments/{name}:
     get:
-      operationId: GetEnvironmentForKey
+      operationId: getEnvironment
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema: {}
+        "404":
+          description: ""
+          content:
+            application/json:
+              schema:
+                properties:
+                  reason:
+                    type: string
+                required:
+                  - reason
+                type: object
       tags:
         - Environment
       security: []
       parameters:
         - in: path
-          name: key
+          name: name
           required: true
           schema:
             type: string
-  /test/environments/{key}:
+  /test/environments/{name}:
     put:
-      operationId: SetEnvironmentForKey
+      operationId: setEnvironmentTestRoute
       responses:
-        '204':
+        "204":
           description: No Content
       tags:
-        - Test Routes
+        - TestRoutes
       security: []
       parameters:
         - in: path
-          name: key
+          name: name
           required: true
           schema:
             type: string
@@ -417,7 +495,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SetEnvironmentForKeyRequestBody'
+              $ref: "#/components/schemas/SetEnvironmentForKeyRequestBody"
 servers:
   - url: http://localhost:59595
     description: monday-code Local dev server

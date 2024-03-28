@@ -1,24 +1,13 @@
-import { accessSync, existsSync, constants as fsConstants, readFileSync, writeFileSync } from 'node:fs';
-
-import appRoot from 'app-root-path';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 
 import { InternalServerError } from 'errors/index';
 import { isDefined } from 'types/type-guards';
+import { hasDiskWriteAccess } from 'utils/files';
 import { Logger } from 'utils/logger';
 
 import type { JsonValue } from 'shared/types/general.type';
 
 const logger = new Logger('storage');
-
-const hasDiskWriteAccess = () => {
-  const rootDir = appRoot.toString();
-  try {
-    accessSync(rootDir, fsConstants.W_OK);
-    return true;
-  } catch (_err) {
-    return false;
-  }
-};
 
 const inMemoryData: Record<string, JsonValue> = {};
 

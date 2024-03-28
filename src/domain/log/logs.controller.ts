@@ -1,4 +1,4 @@
-import { Post, SuccessResponse } from '@tsoa/runtime';
+import { OperationId, Post, SuccessResponse } from '@tsoa/runtime';
 import { ReasonPhrases, StatusCodes } from 'http-status-codes';
 import { Body, Route, Tags } from 'tsoa';
 
@@ -10,6 +10,7 @@ import type { WriteLogRequestBody } from 'domain/log/logs.types';
 @Tags('Logs')
 export class LogsController {
   @Post()
+  @OperationId('writeLog')
   @SuccessResponse(StatusCodes.NO_CONTENT, ReasonPhrases.NO_CONTENT)
   public async writeLog(@Body() body: WriteLogRequestBody): Promise<void> {
     const { params, message, method, error } = body;
