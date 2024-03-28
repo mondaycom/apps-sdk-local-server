@@ -14,5 +14,5 @@ services:
       - PUB_SUB_RETRY_INTERVAL_IN_SECONDS=600
       - NODE_TLS_REJECT_UNAUTHORIZED=0
     ports:
-      - "59999:3000"
+      - '59999:3000'
     command: node ./dist/src/app.js

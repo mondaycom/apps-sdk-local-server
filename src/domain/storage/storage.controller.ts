@@ -1,9 +1,10 @@
-import type { TsoaResponse } from '@tsoa/runtime';
 import { Header, OperationId, Query, Res, SuccessResponse } from '@tsoa/runtime';
 import { ReasonPhrases, StatusCodes } from 'http-status-codes';
 import { Body, Delete, Get, Path, Put, Route, Tags } from 'tsoa';
 
 import { StorageService } from './storage.service';
+
+import type { TsoaResponse } from '@tsoa/runtime';
 import type { IncrementStorageForKeyRequestBody, SetStorageForKeyRequestBody } from 'domain/storage/storage.types';
 import type { JsonValue } from 'types/general.type';
 
