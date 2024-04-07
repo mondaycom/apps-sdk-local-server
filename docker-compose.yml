@@ -1,9 +1,7 @@
 version: '3'
 services:
   local_monday_code_api_server:
-    build:
-      context: ghcr.io/DorShakedMonday/apps-sdk-local-server:latest
-      dockerfile: Dockerfile
+    image: ghcr.io/mondaycom/apps-sdk-local-server:latest
     user: node
     volumes:
       - /Users/dorsh/temp/local-volumes:/app/volumes
