@@ -2,7 +2,7 @@ version: '3'
 services:
   local_monday_code_api_server:
     build:
-      context: .
+      context: ghcr.io/DorShakedMonday/apps-sdk-local-server:latest
       dockerfile: Dockerfile
     user: node
     volumes:
