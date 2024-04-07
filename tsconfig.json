@@ -1,0 +1,35 @@
+{
+  "exclude": ["node_modules", "dist", "./tests/**/*", ".vscode/**/*", ".idea/**/*"],
+  "include": ["src/**/*.ts"],
+  "compilerOptions": {
+    "module": "ES2022",
+    "incremental": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "pretty": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "rootDir": "./",
+    "baseUrl": ".",
+    "importHelpers": true,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "downlevelIteration": true,
+    "types": ["node"],
+    "paths": {
+      "src/*": ["./src/*"],
+      "domain/*": ["./src/domain/*"],
+      "routes/*": ["./src/routes/*"],
+      "shared/*": ["./src/shared/*"],
+      "types/*": ["./src/shared/types/*"],
+      "errors/*": ["./src/shared/errors/*"],
+      "utils/*": ["./src/shared/utils/*"],
+      "middlewares/*": ["./src/shared/middlewares/*"],
+      "managers/*": ["./src/managers/*"]
+    }
+  }
+}

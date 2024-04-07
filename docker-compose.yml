@@ -1,0 +1,18 @@
+version: '3'
+services:
+  local_monday_code_api_server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    user: node
+    volumes:
+      - /Users/dorsh/temp/local-volumes:/app/volumes
+    working_dir: /app
+    environment:
+      - VOLUME_PATH=/Users/dorsh/temp/local-volumes
+      - PUB_SUB_DEV_APP_SERVICE_URL=http://localhost:3000
+      - PUB_SUB_RETRY_INTERVAL_IN_SECONDS=600
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+    ports:
+      - '59999:3000'
+    command: node ./dist/src/app.js

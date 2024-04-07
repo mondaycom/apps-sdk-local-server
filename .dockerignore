@@ -1,0 +1,8 @@
+.vscode
+.idea
+node_modules
+test
+tests
+.gitignore
+LICENSE
+README.md
