@@ -2,15 +2,16 @@ version: '3'
 services:
   local_monday_code_api_server:
     image: ghcr.io/mondaycom/apps-sdk-local-server:latest
+    platform: linux/x86_64
     user: node
     volumes:
-      - /Users/dorsh/temp/local-volumes:/app/volumes
+      - <VOLUME_FOR_LOCAL_SERVER_IN_LOCAL_MACHINE>:/app/volumes #- /Users/dorsh/temp/local-volumes:/app/volumes # Example for local volume mapping
     working_dir: /app
     environment:
-      - VOLUME_PATH=/Users/dorsh/temp/local-volumes
-      - PUB_SUB_DEV_APP_SERVICE_URL=http://localhost:3000
-      - PUB_SUB_RETRY_INTERVAL_IN_SECONDS=600
-      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - VOLUME_PATH=<VOLUME_FOR_LOCAL_SERVER_IN_LOCAL_MACHINE> # Add the same path as the volume path (line 7)
+      - PUB_SUB_DEV_APP_SERVICE_URL=http://localhost:3000 # Change to your local server URL
+      - PUB_SUB_RETRY_INTERVAL_IN_SECONDS=600 # Time in seconds to retry failed requests to the local server from the queue
+      - NODE_TLS_REJECT_UNAUTHORIZED=0 # Required for local development
     ports:
       - '59999:3000'
     command: node ./dist/src/app.js
