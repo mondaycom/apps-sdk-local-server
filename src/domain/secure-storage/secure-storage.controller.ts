@@ -27,6 +27,17 @@ export class SecureStorageController {
     }
 
     return { value };
+
+    // TODO:
+    /**
+     * Differences Identified:
+     * Response Data Type:
+     * SIDECAR returns a type defined as SecureStorageDataContract.
+     * TARGET returns a JSON object directly.
+     * Required Changes to TARGET:
+     * Standardize Response Type:
+     * Adjust TARGET to use SecureStorageDataContract for the response type to ensure type consistency.
+     */
   }
 
   @Delete('{key}')
@@ -47,4 +58,15 @@ export class SecureStorageController {
     SecureStorageService.setSecureValue(key, value);
     return value;
   }
+
+  // TODO:
+  /**
+   * Differences Identified:
+   * Request Body Type:
+   * SIDECAR uses SecureStorageDataContract.
+   * TARGET uses SetSecureStorageForKeyRequestBody.
+   * Required Changes to TARGET:
+   * Align Request Body Type:
+   * Change the request body type in TARGET from SetSecureStorageForKeyRequestBody to SecureStorageDataContract to maintain type consistency across both APIs.
+   */
 }

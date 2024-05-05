@@ -21,3 +21,11 @@ export class SecretsController {
     return secret;
   }
 }
+
+// TODO:
+/**
+ * Required Changes to TARGET:
+ * Add Missing Endpoint:
+ * Implement the /secrets GET endpoint in TARGET to retrieve all secret keys.
+ * Define the operation as getSecretKeys with a 200 response returning an array of strings, similar to SIDECAR.
+ */

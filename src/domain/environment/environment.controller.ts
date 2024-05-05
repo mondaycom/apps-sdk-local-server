@@ -23,4 +23,33 @@ export class EnvironmentController {
 
     return value;
   }
+
+  // TODO:
+  /**
+   * Differences Identified:
+   * Endpoint Path Difference:
+   * SIDECAR uses /environment-variables/{name}
+   * TARGET uses /environments/{name}
+   * OperationId Difference:
+   * SIDECAR: getEnvironmentVariable
+   * TARGET: getEnvironment
+   * Return Type:
+   * SIDECAR explicitly returns a string.
+   * TARGET returns an unknown type.
+   * Required Changes to TARGET:
+   * Align Endpoint Path:
+   * Change the endpoint path in TARGET from /environments/{name} to /environment-variables/{name} to match SIDECAR.
+   * Standardize OperationId:
+   * Update the OperationId in TARGET to getEnvironmentVariable to maintain consistency with SIDECAR.
+   * Standardize Return Type:
+   * Change the return type in the TARGET from unknown to string to align with the explicit type definition in SIDECAR.
+   */
 }
+
+// TODO:
+/**
+ * Required Changes to TARGET:
+ * Add Missing Endpoint:
+ * Implement the /environments GET endpoint in TARGET to retrieve all environment variable keys.
+ * Define the operation as getEnvironmentVariableKeys with a 200 response returning an array of strings.
+ */

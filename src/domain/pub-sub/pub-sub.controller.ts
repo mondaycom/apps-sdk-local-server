@@ -17,6 +17,17 @@ export class PubSubController {
     const id = PubSubService.publishMessage(message);
 
     return { id };
+
+    // TODO:
+    /**
+     * Differences Identified:
+     * Formal Response Body Type:
+     * SIDECAR explicitly returns PublishMessageResponse.
+     * TARGET returns { id } but does not explicitly use PublishMessageResponse.
+     * Required Changes to TARGET:
+     * Standardize Response Body Type:
+     * Ensure the TARGET uses PublishMessageResponse as the formal response body type to maintain API consistency.
+     */
   }
 
   @Post('validate-secret')
@@ -27,5 +38,18 @@ export class PubSubController {
     const valid = PubSubService.validateSecret(secret);
 
     return { valid };
+
+    // TODO:
+    /**
+     * Differences Identified:
+     * Formal Response Body Type:
+     * SIDECAR explicitly returns ValidateSecretResponse.
+     * TARGET returns { valid } but does not explicitly use ValidateSecretResponse.
+     * Required Changes to TARGET:
+     * Standardize Response Body Type:
+     * Ensure the TARGET uses ValidateSecretResponse as the formal response body type for consistency.
+     */
   }
 }
+
+// TODO: file and class names

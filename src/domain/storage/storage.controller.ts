@@ -32,6 +32,17 @@ export class StorageController {
     }
 
     return { value, version };
+
+    // TODO:
+    /**
+     * Differences Identified:
+     * Response Data Type:
+     * SIDECAR uses StorageDataContract.
+     * TARGET directly returns a JSON object.
+     * Required Changes to TARGET:
+     * Standardize Response Type:
+     * Adjust TARGET to use StorageDataContract for the response type to ensure type consistency.
+     */
   }
 
   @Delete('{key}')
@@ -55,6 +66,16 @@ export class StorageController {
     await storageService.set(key, value, { previousVersion, shared });
 
     return value;
+    // TODO
+    /**
+     * Differences Identified:
+     * Request Body Type:
+     * SIDECAR uses StorageDataContract.
+     * TARGET uses SetStorageForKeyRequestBody.
+     * Required Changes to TARGET:
+     * Align Request Body Type:
+     * Change the request body type in TARGET from SetStorageForKeyRequestBody to StorageDataContract to maintain type consistency across both APIs.
+     */
   }
 
   @Put('counter/increment')
@@ -68,5 +89,21 @@ export class StorageController {
     const storageService = new StorageService(accessToken);
     const value = await storageService.incrementCounter(period, { incrementBy, kind, renewalDate });
     return value?.newCounterValue?.toString();
+
+    // TODO:
+    /**
+     * Differences Identified:
+     * Request Body Type:
+     * SIDECAR uses IncrementCounterParams.
+     * TARGET uses IncrementStorageForKeyRequestBody.
+     * Method Type:
+     * SIDECAR uses POST.
+     * TARGET uses PUT.
+     * Required Changes to TARGET:
+     * Align Method Type:
+     * Change the method type in TARGET from PUT to POST to match SIDECAR.
+     * Align Request Body Type:
+     * Change the request body type in TARGET from IncrementStorageForKeyRequestBody to IncrementCounterParams to maintain consistency.
+     */
   }
 }
