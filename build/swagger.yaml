@@ -22,10 +22,6 @@ components:
       nullable: true
     SetStorageForKeyRequestBody:
       properties:
-        shared:
-          type: boolean
-        previousVersion:
-          type: string
         value:
           type: string
       required:
@@ -97,8 +93,6 @@ components:
       description: Construct a type with a set of properties K of type T
     WriteLogRequestBody:
       properties:
-        params:
-          $ref: "#/components/schemas/Record_string.unknown_"
         error:
           anyOf:
             - type: string
@@ -110,7 +104,7 @@ components:
       required:
         - method
       type: object
-    SetEnvironmentForKeyRequestBody:
+    SetEnvironmentVariableForKeyRequestBody:
       properties:
         value:
           $ref: "#/components/schemas/JsonValue"
@@ -210,7 +204,27 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/JsonValue"
+                anyOf:
+                  - properties:
+                      error: {}
+                      success:
+                        type: boolean
+                      version:
+                        type: string
+                    required:
+                      - success
+                      - version
+                    type: object
+                  - properties:
+                      version: {}
+                      success:
+                        type: boolean
+                      error:
+                        type: string
+                    required:
+                      - success
+                      - error
+                    type: object
       tags:
         - Storage
       security: []
@@ -223,6 +237,16 @@ paths:
         - in: path
           name: key
           required: true
+          schema:
+            type: string
+        - in: query
+          name: shared
+          required: false
+          schema:
+            type: boolean
+        - in: query
+          name: previousVersion
+          required: false
           schema:
             type: string
       requestBody:
@@ -240,7 +264,32 @@ paths:
           content:
             application/json:
               schema:
-                type: string
+                anyOf:
+                  - properties:
+                      newCounterValue: {}
+                      message: {}
+                      success:
+                        type: boolean
+                      error:
+                        type: string
+                    required:
+                      - success
+                      - error
+                    type: object
+                  - properties:
+                      error: {}
+                      success:
+                        type: boolean
+                      newCounterValue:
+                        type: number
+                        format: double
+                      message:
+                        type: string
+                    required:
+                      - success
+                      - newCounterValue
+                      - message
+                    type: object
       tags:
         - Storage
       security: []
@@ -313,7 +362,7 @@ paths:
           content:
             application/json:
               schema:
-                type: string
+                type: boolean
       tags:
         - SecureStorage
       security: []
@@ -359,6 +408,22 @@ paths:
           required: true
           schema:
             type: string
+  /secrets:
+    get:
+      operationId: getSecretKeys
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                items:
+                  type: string
+                type: array
+      tags:
+        - Secret
+      security: []
+      parameters: []
   /test/secrets/{name}:
     put:
       operationId: setSecretTestRoute
@@ -446,15 +511,16 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/WriteLogRequestBody"
-  /environments/{name}:
+  /environment-variables/{name}:
     get:
-      operationId: getEnvironment
+      operationId: getEnvironmentVariable
       responses:
         "200":
           description: OK
           content:
             application/json:
-              schema: {}
+              schema:
+                $ref: "#/components/schemas/JsonValue"
         "404":
           description: ""
           content:
@@ -467,7 +533,7 @@ paths:
                   - reason
                 type: object
       tags:
-        - Environment
+        - EnvironmentVariables
       security: []
       parameters:
         - in: path
@@ -475,6 +541,22 @@ paths:
           required: true
           schema:
             type: string
+  /environment-variables:
+    get:
+      operationId: getEnvironmentVariableKeys
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                items:
+                  type: string
+                type: array
+      tags:
+        - EnvironmentVariables
+      security: []
+      parameters: []
   /test/environments/{name}:
     put:
       operationId: setEnvironmentTestRoute
@@ -495,7 +577,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/SetEnvironmentForKeyRequestBody"
+              $ref: "#/components/schemas/SetEnvironmentVariableForKeyRequestBody"
 servers:
   - url: http://localhost:59999
     description: monday-code Local dev server

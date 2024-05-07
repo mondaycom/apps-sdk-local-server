@@ -18,14 +18,19 @@ export class SecretService {
 
   static getSecretForKey(key: string): string {
     this.initialize();
-    const environmentFile = readJsonFile(SECRETS_FILE);
-    return environmentFile[key] as string;
+    const secretsFile = readJsonFile(SECRETS_FILE);
+    return secretsFile[key] as string;
   }
 
   static setSecretForKey(key: string, value: JsonValue) {
     this.initialize();
-    const environmentFile = readJsonFile(SECRETS_FILE);
-    environmentFile[key] = value;
-    writeJsonFile(SECRETS_FILE, environmentFile);
+    const secretsFile = readJsonFile(SECRETS_FILE);
+    secretsFile[key] = value;
+    writeJsonFile(SECRETS_FILE, secretsFile);
+  }
+
+  static getSecretKeys() {
+    const secretsFile = readJsonFile(SECRETS_FILE);
+    return Object.keys(secretsFile);
   }
 }

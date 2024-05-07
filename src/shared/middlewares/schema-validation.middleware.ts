@@ -1,3 +1,5 @@
+import { StatusCodes } from 'http-status-codes';
+
 import { Logger } from 'utils/logger';
 
 import type { RequestHandler } from 'express';
@@ -62,7 +64,7 @@ export const validateZodSchema: <TParams = unknown, TQuery = unknown, TBody = un
       });
 
       logger.error({ errors: serializedErrors }, 'Request input validation failed with zod');
-      return res.status(400).send(serializedErrors);
+      return res.status(StatusCodes.BAD_REQUEST).send(serializedErrors);
     }
 
     await requestHandler(req, res, next);

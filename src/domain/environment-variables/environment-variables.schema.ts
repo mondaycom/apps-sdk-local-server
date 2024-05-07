@@ -2,13 +2,13 @@ import { z } from 'zod';
 
 import { jsonValueSchema } from 'shared/schemas/general.schema';
 
-export const getEnvironmentForKeyRequestSchema = {
+export const getEnvironmentVariableForKeyRequestSchema = {
   params: z.object({
     key: z.string()
   })
 };
 
-export const setEnvironmentForKeyRequestSchema = {
+export const setEnvironmentVariableForKeyRequestSchema = {
   params: z.object({
     key: z.string()
   }),

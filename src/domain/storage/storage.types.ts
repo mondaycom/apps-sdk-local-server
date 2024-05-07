@@ -4,7 +4,7 @@ export type SetSecureStorageForKeyRequestBody = {
   value: string;
 };
 
-export type SetStorageForKeyRequestBody = { value: string; previousVersion?: string; shared?: boolean };
+export type SetStorageForKeyRequestBody = { value: string };
 
 export type IncrementStorageForKeyRequestBody = {
   period: Period;

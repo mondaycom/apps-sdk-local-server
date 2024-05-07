@@ -18,7 +18,7 @@ export class SecureStorageController {
   @SuccessResponse(StatusCodes.OK, ReasonPhrases.OK)
   public async getSecureValue(
     @Path() key: string,
-    @Res() notFoundResponse: TsoaResponse<404, { reason: string }>
+    @Res() notFoundResponse: TsoaResponse<StatusCodes.NOT_FOUND, { reason: string }>
   ): Promise<{ value: JsonValue }> {
     const value = SecureStorageService.getSecureValue(key);
 
@@ -27,17 +27,6 @@ export class SecureStorageController {
     }
 
     return { value };
-
-    // TODO:
-    /**
-     * Differences Identified:
-     * Response Data Type:
-     * SIDECAR returns a type defined as SecureStorageDataContract.
-     * TARGET returns a JSON object directly.
-     * Required Changes to TARGET:
-     * Standardize Response Type:
-     * Adjust TARGET to use SecureStorageDataContract for the response type to ensure type consistency.
-     */
   }
 
   @Delete('{key}')
@@ -53,20 +42,9 @@ export class SecureStorageController {
   public async updateSecureValue(
     @Path() key: string,
     @Body() body: SetSecureStorageForKeyRequestBody
-  ): Promise<string> {
+  ): Promise<boolean> {
     const { value } = body;
     SecureStorageService.setSecureValue(key, value);
-    return value;
+    return true;
   }
-
-  // TODO:
-  /**
-   * Differences Identified:
-   * Request Body Type:
-   * SIDECAR uses SecureStorageDataContract.
-   * TARGET uses SetSecureStorageForKeyRequestBody.
-   * Required Changes to TARGET:
-   * Align Request Body Type:
-   * Change the request body type in TARGET from SetSecureStorageForKeyRequestBody to SecureStorageDataContract to maintain type consistency across both APIs.
-   */
 }
