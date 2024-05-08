@@ -1,5 +1,5 @@
 import type { JsonValue } from 'types/general.type';
 
-export type SetEnvironmentForKeyRequestBody = {
+export type SetEnvironmentVariableForKeyRequestBody = {
   value: JsonValue;
 };

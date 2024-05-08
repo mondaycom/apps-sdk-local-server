@@ -5,6 +5,8 @@ import appRoot from 'app-root-path';
 import { InternalServerError } from 'shared/errors';
 import { isDefined } from 'types/type-guards';
 
+import type { JsonValue } from 'types/general.type';
+
 export const initFileIfNotExists = (filePath: string) => {
   if (!hasDiskWriteAccess()) {
     throw new InternalServerError('Missing write permissions');
@@ -33,7 +35,7 @@ export const readJsonFile = (fileName: string) => {
 
   const data = readFileSync(fileName, 'utf-8');
   if (isDefined(data)) {
-    const parsedData: Record<string, unknown> = JSON.parse(data);
+    const parsedData: Record<string, JsonValue> = JSON.parse(data);
     return parsedData;
   }
 

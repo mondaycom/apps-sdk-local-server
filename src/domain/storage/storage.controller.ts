@@ -18,17 +18,17 @@ export class StorageController {
     @Path() key: string,
     @Query() shared: boolean,
     @Header('x-monday-access-token') accessToken: string,
-    @Res() notFoundResponse: TsoaResponse<404, { reason: string }>,
-    @Res() serverError: TsoaResponse<500, { reason?: string }>
+    @Res() notFoundResponse: TsoaResponse<StatusCodes.NOT_FOUND, { reason: string }>,
+    @Res() serverError: TsoaResponse<StatusCodes.INTERNAL_SERVER_ERROR, { reason?: string }>
   ): Promise<{ value: JsonValue; version?: string }> {
     const storageService = new StorageService(accessToken);
     const { value, version, success } = await storageService.get(key);
     if (!success && value === null) {
-      return notFoundResponse(404, { reason: 'Key not found' });
+      return notFoundResponse(StatusCodes.NOT_FOUND, { reason: 'Key not found' });
     }
 
     if (!success) {
-      return serverError(500, { reason: 'An error occurred while fetching the key' });
+      return serverError(StatusCodes.INTERNAL_SERVER_ERROR, { reason: 'An error occurred while fetching the key' });
     }
 
     return { value, version };
@@ -48,13 +48,14 @@ export class StorageController {
   public async updateValue(
     @Header('x-monday-access-token') accessToken: string,
     @Path() key: string,
-    @Body() body: SetStorageForKeyRequestBody
-  ): Promise<JsonValue> {
-    const { value, previousVersion, shared } = body;
+    @Body() body: SetStorageForKeyRequestBody,
+    @Query() shared?: boolean,
+    @Query() previousVersion?: string
+  ) {
+    const { value } = body;
     const storageService = new StorageService(accessToken);
-    await storageService.set(key, value, { previousVersion, shared });
-
-    return value;
+    const result = await storageService.set(key, value, { previousVersion, shared });
+    return result;
   }
 
   @Put('counter/increment')
@@ -63,10 +64,10 @@ export class StorageController {
   public async counterIncrement(
     @Header('x-monday-access-token') accessToken: string,
     @Body() body: IncrementStorageForKeyRequestBody
-  ): Promise<string | undefined> {
+  ) {
     const { period, incrementBy, renewalDate, kind } = body;
     const storageService = new StorageService(accessToken);
-    const value = await storageService.incrementCounter(period, { incrementBy, kind, renewalDate });
-    return value?.newCounterValue?.toString();
+    const result = await storageService.incrementCounter(period, { incrementBy, kind, renewalDate });
+    return result;
   }
 }

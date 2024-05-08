@@ -12,12 +12,29 @@ export class SecretsController {
   @Get('{name}')
   @OperationId('getSecret')
   @SuccessResponse(StatusCodes.OK, ReasonPhrases.OK)
-  public getSecretForKey(@Path() name: string, @Res() notFoundResponse: TsoaResponse<404, { reason: string }>): string {
+  public getSecretForKey(
+    @Path() name: string,
+    @Res()
+    notFoundResponse: TsoaResponse<
+      StatusCodes.NOT_FOUND,
+      {
+        reason: string;
+      }
+    >
+  ): string {
     const secret = SecretService.getSecretForKey(name);
     if (!secret) {
-      return notFoundResponse(404, { reason: 'Secret not found' });
+      return notFoundResponse(StatusCodes.NOT_FOUND, { reason: 'Secret not found' });
     }
 
     return secret;
+  }
+
+  @Get()
+  @OperationId('getSecretKeys')
+  @SuccessResponse(StatusCodes.OK, ReasonPhrases.OK)
+  public async getKeys(): Promise<string[]> {
+    const keys = SecretService.getSecretKeys();
+    return keys;
   }
 }

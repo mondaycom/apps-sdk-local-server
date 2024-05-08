@@ -18,7 +18,7 @@ export class SecureStorageController {
   @SuccessResponse(StatusCodes.OK, ReasonPhrases.OK)
   public async getSecureValue(
     @Path() key: string,
-    @Res() notFoundResponse: TsoaResponse<404, { reason: string }>
+    @Res() notFoundResponse: TsoaResponse<StatusCodes.NOT_FOUND, { reason: string }>
   ): Promise<{ value: JsonValue }> {
     const value = SecureStorageService.getSecureValue(key);
 
@@ -42,9 +42,9 @@ export class SecureStorageController {
   public async updateSecureValue(
     @Path() key: string,
     @Body() body: SetSecureStorageForKeyRequestBody
-  ): Promise<string> {
+  ): Promise<boolean> {
     const { value } = body;
     SecureStorageService.setSecureValue(key, value);
-    return value;
+    return true;
   }
 }

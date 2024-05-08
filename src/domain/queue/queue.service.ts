@@ -5,10 +5,10 @@ import { AsyncTask, SimpleIntervalJob, ToadScheduler } from 'toad-scheduler';
 import { v4 as uuidv4 } from 'uuid';
 
 import {
-  APP_SERVICE_PUB_SUB_ENDPOINT,
+  APP_SERVICE_QUEUE_ENDPOINT,
   APP_SERVICE_URL,
-  PUB_SUB_RETRY_INTERVAL_IN_SECONDS
-} from 'domain/pub-sub/pub-sub.consts';
+  QUEUE_RETRY_INTERVAL_IN_SECONDS
+} from 'domain/queue/queue.consts';
 import { BadRequestError } from 'shared/errors';
 import { generateBase64Secret } from 'utils/cipher';
 import { Logger } from 'utils/logger';
@@ -41,7 +41,7 @@ const createNewTask = (message: string) => {
   const task = new AsyncTask(
     taskId,
     async () => {
-      const response = await fetch(`${APP_SERVICE_URL}/${APP_SERVICE_PUB_SUB_ENDPOINT}?secret=${taskSecret}`, {
+      const response = await fetch(`${APP_SERVICE_URL}/${APP_SERVICE_QUEUE_ENDPOINT}?secret=${taskSecret}`, {
         method: 'POST',
 
         body: JSON.stringify({ message }),
@@ -90,11 +90,11 @@ const removeJobIdAndSecret = (taskSecret: string) => {
   jobsStore.delete(taskSecret);
 };
 
-export class PubSubService {
+export class QueueService {
   static publishMessage(message: string) {
     validateAppServiceUrl();
     const { taskId, task } = createNewTask(message);
-    const job = new SimpleIntervalJob({ seconds: PUB_SUB_RETRY_INTERVAL_IN_SECONDS }, task, {
+    const job = new SimpleIntervalJob({ seconds: QUEUE_RETRY_INTERVAL_IN_SECONDS }, task, {
       id: taskId,
       preventOverrun: true
     });

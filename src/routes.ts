@@ -11,13 +11,13 @@ import { SecretsController } from './domain/secrets/secrets.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { SecretsTestController } from './domain/secrets/secrets-test.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { PubSubController } from './domain/pub-sub/pub-sub.controller';
+import { QueueController } from './domain/queue/queue.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { LogsController } from './domain/log/logs.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { EnvironmentController } from './domain/environment/environment.controller';
+import { EnvironmentVariablesController } from './domain/environment-variables/environment-variables.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { EnvironmentTestController } from './domain/environment/environment-test.controller';
+import { EnvironmentVariablesTestController } from './domain/environment-variables/environment-variables-test.controller';
 import type { Request as ExRequest, Response as ExResponse, RequestHandler, Router } from 'express';
 
 
@@ -32,7 +32,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "SetStorageForKeyRequestBody": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"shared":{"dataType":"boolean"},"previousVersion":{"dataType":"string"},"value":{"dataType":"string","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"value":{"dataType":"string","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Period": {
@@ -77,10 +77,10 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "WriteLogRequestBody": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"params":{"ref":"Record_string.unknown_"},"error":{"dataType":"union","subSchemas":[{"dataType":"string"},{"ref":"Record_string.unknown_"}]},"message":{"dataType":"string"},"method":{"ref":"LogMethods","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"error":{"dataType":"union","subSchemas":[{"dataType":"string"},{"ref":"Record_string.unknown_"}]},"message":{"dataType":"string"},"method":{"ref":"LogMethods","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "SetEnvironmentForKeyRequestBody": {
+    "SetEnvironmentVariableForKeyRequestBody": {
         "dataType": "refAlias",
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"value":{"ref":"JsonValue","required":true}},"validators":{}},
     },
@@ -169,6 +169,8 @@ export function RegisterRoutes(app: Router) {
                     accessToken: {"in":"header","name":"x-monday-access-token","required":true,"dataType":"string"},
                     key: {"in":"path","name":"key","required":true,"dataType":"string"},
                     body: {"in":"body","name":"body","required":true,"ref":"SetStorageForKeyRequestBody"},
+                    shared: {"in":"query","name":"shared","dataType":"boolean"},
+                    previousVersion: {"in":"query","name":"previousVersion","dataType":"string"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -346,6 +348,35 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/secrets',
+            ...(fetchMiddlewares<RequestHandler>(SecretsController)),
+            ...(fetchMiddlewares<RequestHandler>(SecretsController.prototype.getKeys)),
+
+            function SecretsController_getKeys(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new SecretsController();
+
+              templateService.apiHandler({
+                methodName: 'getKeys',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.put('/test/secrets/:name',
             ...(fetchMiddlewares<RequestHandler>(SecretsTestController)),
             ...(fetchMiddlewares<RequestHandler>(SecretsTestController.prototype.setSecretForKey)),
@@ -378,10 +409,10 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.post('/queue',
-            ...(fetchMiddlewares<RequestHandler>(PubSubController)),
-            ...(fetchMiddlewares<RequestHandler>(PubSubController.prototype.queue)),
+            ...(fetchMiddlewares<RequestHandler>(QueueController)),
+            ...(fetchMiddlewares<RequestHandler>(QueueController.prototype.publishMessage)),
 
-            function PubSubController_queue(request: ExRequest, response: ExResponse, next: any) {
+            function QueueController_publishMessage(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     body: {"in":"body","name":"body","required":true,"ref":"QueueRequestBody"},
             };
@@ -392,10 +423,10 @@ export function RegisterRoutes(app: Router) {
             try {
                 validatedArgs = templateService.getValidatedArgs({ args, request, response });
 
-                const controller = new PubSubController();
+                const controller = new QueueController();
 
               templateService.apiHandler({
-                methodName: 'queue',
+                methodName: 'publishMessage',
                 controller,
                 response,
                 next,
@@ -408,10 +439,10 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.post('/queue/validate-secret',
-            ...(fetchMiddlewares<RequestHandler>(PubSubController)),
-            ...(fetchMiddlewares<RequestHandler>(PubSubController.prototype.validateSecret)),
+            ...(fetchMiddlewares<RequestHandler>(QueueController)),
+            ...(fetchMiddlewares<RequestHandler>(QueueController.prototype.validateSecret)),
 
-            function PubSubController_validateSecret(request: ExRequest, response: ExResponse, next: any) {
+            function QueueController_validateSecret(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     body: {"in":"body","name":"body","required":true,"ref":"ValidateSecretRequestBody"},
             };
@@ -422,7 +453,7 @@ export function RegisterRoutes(app: Router) {
             try {
                 validatedArgs = templateService.getValidatedArgs({ args, request, response });
 
-                const controller = new PubSubController();
+                const controller = new QueueController();
 
               templateService.apiHandler({
                 methodName: 'validateSecret',
@@ -467,11 +498,11 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/environments/:name',
-            ...(fetchMiddlewares<RequestHandler>(EnvironmentController)),
-            ...(fetchMiddlewares<RequestHandler>(EnvironmentController.prototype.getEnvironmentForKey)),
+        app.get('/environment-variables/:name',
+            ...(fetchMiddlewares<RequestHandler>(EnvironmentVariablesController)),
+            ...(fetchMiddlewares<RequestHandler>(EnvironmentVariablesController.prototype.getEnvironmentVariableForKey)),
 
-            function EnvironmentController_getEnvironmentForKey(request: ExRequest, response: ExResponse, next: any) {
+            function EnvironmentVariablesController_getEnvironmentVariableForKey(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     name: {"in":"path","name":"name","required":true,"dataType":"string"},
                     notFoundResponse: {"in":"res","name":"404","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"reason":{"dataType":"string","required":true}}},
@@ -483,10 +514,10 @@ export function RegisterRoutes(app: Router) {
             try {
                 validatedArgs = templateService.getValidatedArgs({ args, request, response });
 
-                const controller = new EnvironmentController();
+                const controller = new EnvironmentVariablesController();
 
               templateService.apiHandler({
-                methodName: 'getEnvironmentForKey',
+                methodName: 'getEnvironmentVariableForKey',
                 controller,
                 response,
                 next,
@@ -498,14 +529,12 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.put('/test/environments/:name',
-            ...(fetchMiddlewares<RequestHandler>(EnvironmentTestController)),
-            ...(fetchMiddlewares<RequestHandler>(EnvironmentTestController.prototype.setEnvironmentForKey)),
+        app.get('/environment-variables',
+            ...(fetchMiddlewares<RequestHandler>(EnvironmentVariablesController)),
+            ...(fetchMiddlewares<RequestHandler>(EnvironmentVariablesController.prototype.getKeys)),
 
-            function EnvironmentTestController_setEnvironmentForKey(request: ExRequest, response: ExResponse, next: any) {
+            function EnvironmentVariablesController_getKeys(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    name: {"in":"path","name":"name","required":true,"dataType":"string"},
-                    body: {"in":"body","name":"body","required":true,"ref":"SetEnvironmentForKeyRequestBody"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -514,7 +543,38 @@ export function RegisterRoutes(app: Router) {
             try {
                 validatedArgs = templateService.getValidatedArgs({ args, request, response });
 
-                const controller = new EnvironmentTestController();
+                const controller = new EnvironmentVariablesController();
+
+              templateService.apiHandler({
+                methodName: 'getKeys',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.put('/test/environments/:name',
+            ...(fetchMiddlewares<RequestHandler>(EnvironmentVariablesTestController)),
+            ...(fetchMiddlewares<RequestHandler>(EnvironmentVariablesTestController.prototype.setEnvironmentForKey)),
+
+            function EnvironmentVariablesTestController_setEnvironmentForKey(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    name: {"in":"path","name":"name","required":true,"dataType":"string"},
+                    body: {"in":"body","name":"body","required":true,"ref":"SetEnvironmentVariableForKeyRequestBody"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new EnvironmentVariablesTestController();
 
               templateService.apiHandler({
                 methodName: 'setEnvironmentForKey',
