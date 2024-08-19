@@ -1,4 +1,13 @@
-import { accessSync, existsSync, constants as fsConstants, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
+import {
+  accessSync,
+  existsSync,
+  constants as fsConstants,
+  mkdirSync,
+  readFileSync,
+  unlinkSync,
+  writeFileSync
+} from 'node:fs';
+import { dirname } from 'path';
 
 import appRoot from 'app-root-path';
 
@@ -12,9 +21,13 @@ export const initFileIfNotExists = (filePath: string) => {
     throw new InternalServerError('Missing write permissions');
   }
 
+  const dirPath = dirname(filePath);
+
+  if (!existsSync(dirPath)) {
+    mkdirSync(dirPath, { recursive: true });
+  }
   if (!existsSync(filePath)) {
     writeFileSync(filePath, JSON.stringify({}), { encoding: 'utf8', flag: 'wx' });
-    return;
   }
 };
 

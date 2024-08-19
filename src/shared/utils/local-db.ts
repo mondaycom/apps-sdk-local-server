@@ -1,4 +1,5 @@
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname } from 'node:path';
 
 import { InternalServerError } from 'errors/index';
 import { isDefined } from 'types/type-guards';
@@ -39,6 +40,12 @@ class LocalDb {
     }
 
     this.dbFilePath = dbFileName;
+    const dirPath = dirname(this.dbFilePath);
+
+    if (!existsSync(dirPath)) {
+      mkdirSync(dirPath, { recursive: true });
+    }
+
     if (!existsSync(this.dbFilePath)) {
       this.memoryData = {};
       writeFileSync(this.dbFilePath, JSON.stringify(this.memoryData), { encoding: 'utf8', flag: 'wx' });
