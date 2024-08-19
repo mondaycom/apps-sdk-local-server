@@ -25,7 +25,7 @@
   "scripts": {
     "start": "node ./dist/src/app.js",
     "dev": "tsc-watch -p tsconfig.build.json --onSuccess 'npm run start-with-debugger'",
-    "start-with-debugger": "npm run start-tsc-alias && node --inspect=0.0.0.0:9229 ./dist/src/app.js | node scripts/log-filter | bunyan --color -o short",
+    "start-with-debugger": "npm run start-tsc-alias && NODE_TLS_REJECT_UNAUTHORIZED=0 node --inspect=0.0.0.0:9229 ./dist/src/app.js",
     "start-tsc-alias": "tsc-alias -f -p tsconfig.build.json",
     "test": "NODE_ENV=test jest --forceExit",
     "test:coverage": "npm run test -- --coverage",
@@ -77,6 +77,7 @@
     "prettier": "^3.2.5",
     "ts-jest": "^29.1.2",
     "tsc-alias": "^1.8.8",
+    "tsc-watch": "^6.2.0",
     "tsx": "^4.7.1",
     "typescript": "^5.3.3"
   }
