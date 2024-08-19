@@ -1,13 +1,13 @@
 import type { RequestInit } from 'node-fetch';
-import type { JsonValue } from 'shared/types/general.type';
+import type { JsonDataContract } from 'shared/types/general.type';
 
 export type IStorageInstance = {
-  set: <T extends JsonValue>(
+  set: <T extends JsonDataContract['value']>(
     key: string,
     value: T,
     options?: Options
   ) => Promise<{ success: boolean; version?: string; error?: string }>;
-  get: <T extends JsonValue>(key: string) => Promise<GetResponse<T>>;
+  get: <T extends JsonDataContract['value']>(key: string) => Promise<GetResponse<T>>;
   delete: (key: string) => Promise<{ error?: string; success: boolean }>;
 };
 
@@ -34,12 +34,12 @@ export type CounterOptions = {
   renewalDate?: Date;
 };
 
-export type GetServerResponse<T extends JsonValue> = {
+export type GetServerResponse<T extends JsonDataContract['value']> = {
   version?: string;
   value: T | null;
 };
 
-export type GetResponse<T extends JsonValue> = {
+export type GetResponse<T extends JsonDataContract['value']> = {
   success: boolean;
   error?: string;
 } & GetServerResponse<T>;

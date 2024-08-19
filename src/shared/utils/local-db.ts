@@ -5,14 +5,14 @@ import { isDefined } from 'types/type-guards';
 import { hasDiskWriteAccess } from 'utils/files';
 import { Logger } from 'utils/logger';
 
-import type { JsonValue } from 'shared/types/general.type';
+import type { JsonDataContract } from 'shared/types/general.type';
 
 const logger = new Logger('storage');
 
-const inMemoryData: Record<string, JsonValue> = {};
+const inMemoryData: Record<string, JsonDataContract['value']> = {};
 
 class LocalMemoryDb {
-  set<T extends JsonValue>(key: string, value: T) {
+  set<T extends JsonDataContract['value']>(key: string, value: T) {
     inMemoryData[key] = value;
   }
 
@@ -31,7 +31,7 @@ class LocalMemoryDb {
 
 class LocalDb {
   private readonly dbFilePath: string;
-  private memoryData: Record<string, JsonValue>;
+  private memoryData: Record<string, JsonDataContract['value']>;
 
   constructor(dbFileName: string) {
     if (!hasDiskWriteAccess()) {
@@ -54,7 +54,7 @@ class LocalDb {
     this.memoryData = {};
   }
 
-  set<T extends JsonValue>(key: string, value: T) {
+  set<T extends JsonDataContract['value']>(key: string, value: T) {
     this.memoryData[key] = value;
 
     writeFileSync(this.dbFilePath, JSON.stringify(this.memoryData));
@@ -71,7 +71,7 @@ class LocalDb {
     }
 
     const data = readFileSync(this.dbFilePath, 'utf-8');
-    const parsedData: Record<string, JsonValue> = JSON.parse(data);
+    const parsedData: Record<string, JsonDataContract['value']> = JSON.parse(data);
     this.memoryData = parsedData;
     if (key in this.memoryData) {
       return this.memoryData[key] as T;

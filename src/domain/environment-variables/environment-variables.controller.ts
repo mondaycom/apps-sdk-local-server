@@ -5,7 +5,7 @@ import { Get, Path, Route, Tags } from 'tsoa';
 import { EnvironmentVariablesService } from './environment-variables.service';
 
 import type { TsoaResponse } from '@tsoa/runtime';
-import type { JsonValue } from 'types/general.type';
+import type { JsonDataContract } from 'types/general.type';
 
 @Route('environment-variables')
 @Tags('EnvironmentVariables')
@@ -16,7 +16,7 @@ export class EnvironmentVariablesController {
   public async getEnvironmentVariableForKey(
     @Path() name: string,
     @Res() notFoundResponse: TsoaResponse<StatusCodes.NOT_FOUND, { reason: string }>
-  ): Promise<JsonValue> {
+  ): Promise<JsonDataContract['value']> {
     const value = EnvironmentVariablesService.getEnvironmentVariableForKey(name);
     if (value === undefined) {
       return notFoundResponse(StatusCodes.NOT_FOUND, { reason: 'Environment variable not found' });

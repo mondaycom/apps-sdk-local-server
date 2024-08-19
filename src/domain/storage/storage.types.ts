@@ -1,3 +1,4 @@
+import type { JsonDataContract } from 'types/general.type';
 import type { Period } from 'types/storage.type';
 
 export type SetSecureStorageForKeyRequestBody = {
@@ -11,4 +12,9 @@ export type IncrementStorageForKeyRequestBody = {
   incrementBy: number;
   renewalDate: Date;
   kind: string;
+};
+
+export type StorageDataContract = {
+  value: JsonDataContract['value'];
+  version?: string;
 };
