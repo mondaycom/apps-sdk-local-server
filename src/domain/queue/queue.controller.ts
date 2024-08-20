@@ -4,7 +4,12 @@ import { Body, Route, Tags } from 'tsoa';
 
 import { QueueService } from './queue.service';
 
-import type { QueueRequestBody, ValidateSecretRequestBody } from 'domain/queue/queue.types';
+import type {
+  PublishMessageParams,
+  PublishMessageResponse,
+  ValidateSecretParams,
+  ValidateSecretResponse
+} from 'domain/queue/queue.types';
 
 @Route('queue')
 @Tags('Queue')
@@ -12,7 +17,7 @@ export class QueueController {
   @Post()
   @OperationId('publishMessage')
   @SuccessResponse(StatusCodes.OK, ReasonPhrases.OK)
-  public publishMessage(@Body() body: QueueRequestBody) {
+  public async publishMessage(@Body() body: PublishMessageParams): Promise<PublishMessageResponse> {
     const { message } = body;
     const id = QueueService.publishMessage(message);
 
@@ -22,7 +27,7 @@ export class QueueController {
   @Post('validate-secret')
   @OperationId('validateSecret')
   @SuccessResponse(StatusCodes.OK, ReasonPhrases.OK)
-  public validateSecret(@Body() body: ValidateSecretRequestBody) {
+  public async validateSecret(@Body() body: ValidateSecretParams): Promise<ValidateSecretResponse> {
     const { secret } = body;
     const valid = QueueService.validateSecret(secret);
 

@@ -2,7 +2,7 @@ import { isDefined } from 'types/type-guards';
 
 import { BaseStorage } from './base-storage';
 
-import type { JsonValue } from 'types/general.type';
+import type { JsonDataContract } from 'types/general.type';
 import type {
   CounterOptions,
   CounterResponse,
@@ -37,7 +37,7 @@ export class StorageService extends BaseStorage implements IStorageInstance {
     }
   }
 
-  async get<T extends JsonValue>(key: string) {
+  async get<T extends JsonDataContract['value']>(key: string) {
     const result = await this.storageFetch<GetServerResponse<T>>(key, { method: 'GET' });
     if (!isDefined(result)) {
       return { success: false, value: null };
@@ -48,7 +48,7 @@ export class StorageService extends BaseStorage implements IStorageInstance {
     return { success: true, value, version };
   }
 
-  async set<T extends JsonValue>(key: string, value: T, options: Options = {}) {
+  async set<T extends JsonDataContract['value']>(key: string, value: T, options: Options = {}) {
     const { previousVersion } = options;
 
     const result = await this.storageFetch<SetResponse>(

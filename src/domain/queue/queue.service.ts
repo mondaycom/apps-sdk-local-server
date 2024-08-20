@@ -44,7 +44,7 @@ const createNewTask = (message: string) => {
       const response = await fetch(`${APP_SERVICE_URL}/${APP_SERVICE_QUEUE_ENDPOINT}?secret=${taskSecret}`, {
         method: 'POST',
 
-        body: JSON.stringify({ message }),
+        body: JSON.stringify({ content: message }),
         headers: { 'Content-Type': 'application/json' }
       });
 

@@ -1,20 +1,33 @@
-import { accessSync, existsSync, constants as fsConstants, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
+import {
+  accessSync,
+  existsSync,
+  constants as fsConstants,
+  mkdirSync,
+  readFileSync,
+  unlinkSync,
+  writeFileSync
+} from 'node:fs';
+import { dirname } from 'path';
 
 import appRoot from 'app-root-path';
 
 import { InternalServerError } from 'shared/errors';
 import { isDefined } from 'types/type-guards';
 
-import type { JsonValue } from 'types/general.type';
+import type { JsonDataContract } from 'types/general.type';
 
 export const initFileIfNotExists = (filePath: string) => {
   if (!hasDiskWriteAccess()) {
     throw new InternalServerError('Missing write permissions');
   }
 
+  const dirPath = dirname(filePath);
+
+  if (!existsSync(dirPath)) {
+    mkdirSync(dirPath, { recursive: true });
+  }
   if (!existsSync(filePath)) {
     writeFileSync(filePath, JSON.stringify({}), { encoding: 'utf8', flag: 'wx' });
-    return;
   }
 };
 
@@ -35,7 +48,7 @@ export const readJsonFile = (fileName: string) => {
 
   const data = readFileSync(fileName, 'utf-8');
   if (isDefined(data)) {
-    const parsedData: Record<string, JsonValue> = JSON.parse(data);
+    const parsedData: Record<string, JsonDataContract['value']> = JSON.parse(data);
     return parsedData;
   }
 

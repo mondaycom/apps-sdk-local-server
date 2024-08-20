@@ -50,7 +50,7 @@ To run the application, you need to set up the Docker environment. The `docker-c
 3. Run the Docker container:
 
 ```bash
-docker-compose up
+docker compose up
 ```
 
 ## Capabilities that require configuration

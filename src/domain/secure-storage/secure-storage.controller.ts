@@ -7,8 +7,7 @@ import { isDefined } from 'types/type-guards';
 import { SecureStorageService } from './secure-storage.service';
 
 import type { TsoaResponse } from '@tsoa/runtime';
-import type { SetSecureStorageForKeyRequestBody } from 'domain/secure-storage/secure-storage.types';
-import type { JsonValue } from 'types/general.type';
+import type { JsonDataContract } from 'types/general.type';
 
 @Route('secure-storage')
 @Tags('SecureStorage')
@@ -19,7 +18,7 @@ export class SecureStorageController {
   public async getSecureValue(
     @Path() key: string,
     @Res() notFoundResponse: TsoaResponse<StatusCodes.NOT_FOUND, { reason: string }>
-  ): Promise<{ value: JsonValue }> {
+  ): Promise<JsonDataContract> {
     const value = SecureStorageService.getSecureValue(key);
 
     if (!isDefined(value)) {
@@ -39,10 +38,7 @@ export class SecureStorageController {
   @Put('{key}')
   @OperationId('putSecureStorage')
   @SuccessResponse(StatusCodes.OK, ReasonPhrases.OK)
-  public async updateSecureValue(
-    @Path() key: string,
-    @Body() body: SetSecureStorageForKeyRequestBody
-  ): Promise<boolean> {
+  public async updateSecureValue(@Path() key: string, @Body() body: JsonDataContract): Promise<boolean> {
     const { value } = body;
     SecureStorageService.setSecureValue(key, value);
     return true;
