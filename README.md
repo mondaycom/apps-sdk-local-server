@@ -1,74 +1,63 @@
-# Project Title
+# Apps SDK Local Server
 
-This is a Node.js project that uses Docker for containerization. The project is written in TypeScript and uses npm and yarn as package managers.
+This project provides a local server environment for developing and testing applications with the monday code SDK. It emulates the behavior of the SDK in a production environment, offering identical capabilities and API endpoints, allowing seamless transitions between your local setup and the production SDK.
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+Follow the steps below to get a local copy of this project up and running on your machine for development and testing.
 
 ### Prerequisites
 
-- Docker
-- Node.js
-- npm
-- yarn
+- **Docker**: Ensure Docker is installed on your machine. You can download it from [here](https://www.docker.com/get-started).
 
-### Installation
+### Running the Application
 
-1. Clone the repository:
+1. **Configure the Docker Volume:**
 
-```bash
-git clone https://github.com/<username>/<repository>.git
-```
+   - Open the `docker-compose.yml` file.
+   - Replace `<VOLUME_FOR_LOCAL_SERVER_IN_LOCAL_MACHINE>` with the path to your local machine's desired volume.
+   - Set the `VOLUME_PATH` environment variable in the same file to match the volume path.
 
-2. Navigate to the project directory:
+2. **Start the Docker Container:**
 
-```bash
-cd <repository>
-```
+   Run the following command in your terminal:
 
-3. Install the dependencies:
+   ```bash
+   docker compose up
+   ```
 
-```bash
-npm install
-```
+3. **Access the Application:**
 
-or
+   Once the container is up and running, your application will be accessible at `http://localhost:59999`.
 
-```bash
-yarn install
-```
+## Capabilities Requiring Configuration
 
-## Running the Application
+### Queue Management
 
-To run the application, you need to set up the Docker environment. The `docker-compose.yml` file is already provided in the repository.
+This server includes a queue management system for handling time-consuming tasks efficiently in the background, improving both performance and reliability. The queue processes tasks in the order they are received and retries in case of failures, ensuring no task is lost.
 
-1. Replace `<VOLUME_FOR_LOCAL_SERVER_IN_LOCAL_MACHINE>` in the `docker-compose.yml` file with the path to the volume on your local machine.
+To configure the queue capability:
 
-2. Set the `VOLUME_PATH` environment variable in the `docker-compose.yml` file to the same path as the volume path.
+- **`PUB_SUB_DEV_APP_SERVICE_URL`**: URL of the local server that handles task execution.
+- **`PUB_SUB_RETRY_INTERVAL_IN_SECONDS`**: Time interval (in seconds) for retrying failed requests.
 
-3. Run the Docker container:
+These environment variables are set within the `docker-compose.yml` file.
 
-```bash
-docker compose up
-```
+## Development Routes
 
-## Capabilities that require configuration
+The local server provides additional routes to facilitate development:
 
-### Queue
+1. **Set Environment Variable**:
 
-The queue capability is used to manage the execution of tasks in the application. It is particularly useful for handling tasks that are time-consuming and can be processed in the background. The queue ensures that the tasks are executed in the order they were added and that no task is lost in case of a failure.
+   - **Endpoint:** `/test/environments/{name}`
+   - **Method:** `PUT`
+   - **Description:** Sets the environment variable `{name}` to the value provided in the request body.
 
-The queue capability is implemented using the `PUB_SUB_DEV_APP_SERVICE_URL` and `PUB_SUB_RETRY_INTERVAL_IN_SECONDS` environment variables defined in the `docker-compose.yml` file. The `PUB_SUB_DEV_APP_SERVICE_URL` is the URL of the local server that handles the tasks, and the `PUB_SUB_RETRY_INTERVAL_IN_SECONDS` is the time in seconds to retry failed requests to the local server from the queue.
-
-The queue capability is essential for improving the performance and reliability of the application. It allows the application to handle a large number of tasks efficiently and ensures that all tasks are processed even in case of temporary failures.
-
-The application will be accessible at `http://localhost:59999`.
-
-## GitHub Actions
-
-This repository uses GitHub Actions for CI/CD. The workflow is defined in the `.github/workflows/docker-image.yml` file. It automatically builds and pushes the Docker image to the GitHub Container Registry whenever there's a push to the `master` branch or when the workflow is manually triggered.
+2. **Set Secret**:
+   - **Endpoint:** `/test/secrets/{name}`
+   - **Method:** `PUT`
+   - **Description:** Sets the secret `{name}` to the value provided in the request body.
 
 ## License
 
-This project is licensed under the MIT License - see the `LICENSE.md` file for details.
+This project is licensed under the MIT License. For more details, see the `LICENSE.md` file.
