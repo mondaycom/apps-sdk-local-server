@@ -2,7 +2,7 @@ import { initFileIfNotExists, readJsonFile, writeJsonFile } from 'utils/files';
 
 import { SECRETS_FILE } from './secrets.consts';
 
-import type { JsonValue } from 'types/general.type';
+import type { JsonDataContract } from 'types/general.type';
 
 export class SecretService {
   private static isInitialized = false;
@@ -22,7 +22,7 @@ export class SecretService {
     return secretsFile[key] as string;
   }
 
-  static setSecretForKey(key: string, value: JsonValue) {
+  static setSecretForKey(key: string, value: JsonDataContract['value']) {
     this.initialize();
     const secretsFile = readJsonFile(SECRETS_FILE);
     secretsFile[key] = value;

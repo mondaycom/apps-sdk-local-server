@@ -31,6 +31,7 @@
   "rules": {
     "@typescript-eslint/no-var-requires": 0,
     "@typescript-eslint/consistent-type-imports": "error",
+    "@typescript-eslint/no-explicit-any": "warn",
     "sort-imports": [
       "error",
       {

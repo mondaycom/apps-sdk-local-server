@@ -7,48 +7,23 @@
     "requestBodies": {},
     "responses": {},
     "schemas": {
-      "JsonValue": {
-        "anyOf": [
-          {
-            "type": "string"
-          },
-          {
-            "type": "number",
-            "format": "double"
-          },
-          {
-            "type": "boolean"
-          },
-          {
-            "items": {
-              "$ref": "#/components/schemas/JsonValue"
-            },
-            "type": "array"
-          },
-          {
-            "properties": {},
-            "additionalProperties": {
-              "$ref": "#/components/schemas/JsonValue"
-            },
-            "type": "object"
-          }
-        ],
-        "nullable": true
-      },
-      "SetStorageForKeyRequestBody": {
+      "StorageDataContract": {
         "properties": {
-          "shared": {
-            "type": "boolean"
-          },
-          "previousVersion": {
+          "version": {
             "type": "string"
           },
-          "value": {
-            "type": "string"
-          }
+          "value": {}
         },
         "required": ["value"],
         "type": "object"
+      },
+      "JsonDataContract": {
+        "properties": {
+          "value": {}
+        },
+        "required": ["value"],
+        "type": "object",
+        "additionalProperties": false
       },
       "Period": {
         "enum": ["DAILY", "MONTHLY", "YEARLY"],
@@ -74,15 +49,6 @@
         "required": ["kind", "renewalDate", "incrementBy", "period"],
         "type": "object"
       },
-      "SetSecureStorageForKeyRequestBody": {
-        "properties": {
-          "value": {
-            "type": "string"
-          }
-        },
-        "required": ["value"],
-        "type": "object"
-      },
       "SetSecretForKeyRequestBody": {
         "properties": {
           "value": {
@@ -92,7 +58,16 @@
         "required": ["value"],
         "type": "object"
       },
-      "QueueRequestBody": {
+      "PublishMessageResponse": {
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": ["id"],
+        "type": "object"
+      },
+      "PublishMessageParams": {
         "properties": {
           "message": {
             "type": "string"
@@ -101,7 +76,16 @@
         "required": ["message"],
         "type": "object"
       },
-      "ValidateSecretRequestBody": {
+      "ValidateSecretResponse": {
+        "properties": {
+          "valid": {
+            "type": "boolean"
+          }
+        },
+        "required": ["valid"],
+        "type": "object"
+      },
+      "ValidateSecretParams": {
         "properties": {
           "secret": {
             "type": "string"
@@ -122,9 +106,6 @@
       },
       "WriteLogRequestBody": {
         "properties": {
-          "params": {
-            "$ref": "#/components/schemas/Record_string.unknown_"
-          },
           "error": {
             "anyOf": [
               {
@@ -142,16 +123,7 @@
             "$ref": "#/components/schemas/LogMethods"
           }
         },
-        "required": ["method"],
-        "type": "object"
-      },
-      "SetEnvironmentForKeyRequestBody": {
-        "properties": {
-          "value": {
-            "$ref": "#/components/schemas/JsonValue"
-          }
-        },
-        "required": ["value"],
+        "required": ["message", "method"],
         "type": "object"
       }
     },
@@ -171,22 +143,44 @@
   "paths": {
     "/storage/{key}": {
       "get": {
-        "operationId": "GetValue",
+        "operationId": "getByKeyFromStorage",
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
+                  "$ref": "#/components/schemas/StorageDataContract"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
                   "properties": {
-                    "version": {
+                    "reason": {
                       "type": "string"
-                    },
-                    "value": {
-                      "$ref": "#/components/schemas/JsonValue"
                     }
                   },
-                  "required": ["value"],
+                  "required": ["reason"],
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "reason": {
+                      "type": "string"
+                    }
+                  },
                   "type": "object"
                 }
               }
@@ -203,11 +197,27 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "in": "query",
+            "name": "shared",
+            "required": true,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-monday-access-token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ]
       },
       "delete": {
-        "operationId": "DeleteValue",
+        "operationId": "deleteByKeyFromStorage",
         "responses": {
           "204": {
             "description": "No Content"
@@ -216,6 +226,14 @@
         "tags": ["Storage"],
         "security": [],
         "parameters": [
+          {
+            "in": "header",
+            "name": "x-monday-access-token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "in": "path",
             "name": "key",
@@ -227,14 +245,41 @@
         ]
       },
       "put": {
-        "operationId": "UpdateValue",
+        "operationId": "upsertByKeyFromStorage",
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/JsonValue"
+                  "anyOf": [
+                    {
+                      "properties": {
+                        "error": {},
+                        "success": {
+                          "type": "boolean"
+                        },
+                        "version": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["success", "version"],
+                      "type": "object"
+                    },
+                    {
+                      "properties": {
+                        "version": {},
+                        "success": {
+                          "type": "boolean"
+                        },
+                        "error": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["success", "error"],
+                      "type": "object"
+                    }
+                  ]
                 }
               }
             }
@@ -244,9 +289,33 @@
         "security": [],
         "parameters": [
           {
+            "in": "header",
+            "name": "x-monday-access-token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "in": "path",
             "name": "key",
             "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "shared",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "previousVersion",
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -257,7 +326,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SetStorageForKeyRequestBody"
+                "$ref": "#/components/schemas/JsonDataContract"
               }
             }
           }
@@ -266,14 +335,46 @@
     },
     "/storage/counter/increment": {
       "put": {
-        "operationId": "CounterIncrement",
+        "operationId": "incrementCounter",
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "string"
+                  "anyOf": [
+                    {
+                      "properties": {
+                        "newCounterValue": {},
+                        "message": {},
+                        "success": {
+                          "type": "boolean"
+                        },
+                        "error": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["success", "error"],
+                      "type": "object"
+                    },
+                    {
+                      "properties": {
+                        "error": {},
+                        "success": {
+                          "type": "boolean"
+                        },
+                        "newCounterValue": {
+                          "type": "number",
+                          "format": "double"
+                        },
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["success", "newCounterValue", "message"],
+                      "type": "object"
+                    }
+                  ]
                 }
               }
             }
@@ -281,7 +382,16 @@
         },
         "tags": ["Storage"],
         "security": [],
-        "parameters": [],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-monday-access-token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -296,26 +406,36 @@
     },
     "/secure-storage/{key}": {
       "get": {
-        "operationId": "GetSecureValue",
+        "operationId": "getSecureStorage",
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
+                  "$ref": "#/components/schemas/JsonDataContract"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
                   "properties": {
-                    "value": {
-                      "$ref": "#/components/schemas/JsonValue"
+                    "reason": {
+                      "type": "string"
                     }
                   },
-                  "required": ["value"],
+                  "required": ["reason"],
                   "type": "object"
                 }
               }
             }
           }
         },
-        "tags": ["Secure Storage"],
+        "tags": ["SecureStorage"],
         "security": [],
         "parameters": [
           {
@@ -329,13 +449,13 @@
         ]
       },
       "delete": {
-        "operationId": "DeleteSecureValue",
+        "operationId": "deleteSecureStorage",
         "responses": {
           "204": {
             "description": "No Content"
           }
         },
-        "tags": ["Secure Storage"],
+        "tags": ["SecureStorage"],
         "security": [],
         "parameters": [
           {
@@ -349,20 +469,20 @@
         ]
       },
       "put": {
-        "operationId": "UpdateSecureValue",
+        "operationId": "putSecureStorage",
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "string"
+                  "type": "boolean"
                 }
               }
             }
           }
         },
-        "tags": ["Secure Storage"],
+        "tags": ["SecureStorage"],
         "security": [],
         "parameters": [
           {
@@ -379,16 +499,16 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SetSecureStorageForKeyRequestBody"
+                "$ref": "#/components/schemas/JsonDataContract"
               }
             }
           }
         }
       }
     },
-    "/secrets/{key}": {
+    "/secrets/{name}": {
       "get": {
-        "operationId": "GetSecretForKey",
+        "operationId": "getSecret",
         "responses": {
           "200": {
             "description": "OK",
@@ -399,14 +519,30 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "reason": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["reason"],
+                  "type": "object"
+                }
+              }
+            }
           }
         },
-        "tags": ["Secrets"],
+        "tags": ["Secret"],
         "security": [],
         "parameters": [
           {
             "in": "path",
-            "name": "key",
+            "name": "name",
             "required": true,
             "schema": {
               "type": "string"
@@ -415,20 +551,43 @@
         ]
       }
     },
-    "/test/secrets/{key}": {
+    "/secrets": {
+      "get": {
+        "operationId": "getSecretKeys",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Secret"],
+        "security": [],
+        "parameters": []
+      }
+    },
+    "/test/secrets/{name}": {
       "put": {
-        "operationId": "SetSecretForKey",
+        "operationId": "setSecretTestRoute",
         "responses": {
           "204": {
             "description": "No Content"
           }
         },
-        "tags": ["Test Routes"],
+        "tags": ["TestRoutes"],
         "security": [],
         "parameters": [
           {
             "in": "path",
-            "name": "key",
+            "name": "name",
             "required": true,
             "schema": {
               "type": "string"
@@ -447,28 +606,22 @@
         }
       }
     },
-    "/pub-sub/queue": {
+    "/queue": {
       "post": {
-        "operationId": "Queue",
+        "operationId": "publishMessage",
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "properties": {
-                    "id": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["id"],
-                  "type": "object"
+                  "$ref": "#/components/schemas/PublishMessageResponse"
                 }
               }
             }
           }
         },
-        "tags": ["PubSub"],
+        "tags": ["Queue"],
         "security": [],
         "parameters": [],
         "requestBody": {
@@ -476,35 +629,29 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/QueueRequestBody"
+                "$ref": "#/components/schemas/PublishMessageParams"
               }
             }
           }
         }
       }
     },
-    "/pub-sub/validate-secret": {
+    "/queue/validate-secret": {
       "post": {
-        "operationId": "ValidateSecret",
+        "operationId": "validateSecret",
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "properties": {
-                    "valid": {
-                      "type": "boolean"
-                    }
-                  },
-                  "required": ["valid"],
-                  "type": "object"
+                  "$ref": "#/components/schemas/ValidateSecretResponse"
                 }
               }
             }
           }
         },
-        "tags": ["PubSub"],
+        "tags": ["Queue"],
         "security": [],
         "parameters": [],
         "requestBody": {
@@ -512,7 +659,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ValidateSecretRequestBody"
+                "$ref": "#/components/schemas/ValidateSecretParams"
               }
             }
           }
@@ -521,7 +668,7 @@
     },
     "/logs": {
       "post": {
-        "operationId": "WriteLog",
+        "operationId": "writeLog",
         "responses": {
           "204": {
             "description": "No Content"
@@ -542,9 +689,9 @@
         }
       }
     },
-    "/environments/{key}": {
+    "/environment-variables/{name}": {
       "get": {
-        "operationId": "GetEnvironmentForKey",
+        "operationId": "getEnvironmentVariable",
         "responses": {
           "200": {
             "description": "OK",
@@ -553,14 +700,30 @@
                 "schema": {}
               }
             }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "reason": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["reason"],
+                  "type": "object"
+                }
+              }
+            }
           }
         },
-        "tags": ["Environment"],
+        "tags": ["EnvironmentVariables"],
         "security": [],
         "parameters": [
           {
             "in": "path",
-            "name": "key",
+            "name": "name",
             "required": true,
             "schema": {
               "type": "string"
@@ -569,20 +732,43 @@
         ]
       }
     },
-    "/test/environments/{key}": {
+    "/environment-variables": {
+      "get": {
+        "operationId": "getEnvironmentVariableKeys",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["EnvironmentVariables"],
+        "security": [],
+        "parameters": []
+      }
+    },
+    "/test/environments/{name}": {
       "put": {
-        "operationId": "SetEnvironmentForKey",
+        "operationId": "setEnvironmentTestRoute",
         "responses": {
           "204": {
             "description": "No Content"
           }
         },
-        "tags": ["Test Routes"],
+        "tags": ["TestRoutes"],
         "security": [],
         "parameters": [
           {
             "in": "path",
-            "name": "key",
+            "name": "name",
             "required": true,
             "schema": {
               "type": "string"
@@ -594,7 +780,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SetEnvironmentForKeyRequestBody"
+                "$ref": "#/components/schemas/JsonDataContract"
               }
             }
           }
@@ -604,7 +790,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:59595",
+      "url": "http://localhost:59999",
       "description": "monday-code Local dev server"
     }
   ]

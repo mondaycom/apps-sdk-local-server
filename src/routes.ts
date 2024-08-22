@@ -25,14 +25,17 @@ import type { Request as ExRequest, Response as ExResponse, RequestHandler, Rout
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
-    "JsonValue": {
+    "StorageDataContract": {
         "dataType": "refAlias",
-        "type": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"double"},{"dataType":"boolean"},{"dataType":"enum","enums":[null]},{"dataType":"array","array":{"dataType":"refAlias","ref":"JsonValue"}},{"dataType":"nestedObjectLiteral","nestedProperties":{},"additionalProperties":{"ref":"JsonValue"}}],"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"version":{"dataType":"string"},"value":{"dataType":"any","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "SetStorageForKeyRequestBody": {
-        "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"value":{"dataType":"string","required":true}},"validators":{}},
+    "JsonDataContract": {
+        "dataType": "refObject",
+        "properties": {
+            "value": {"dataType":"any","required":true},
+        },
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Period": {
@@ -45,22 +48,27 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"kind":{"dataType":"string","required":true},"renewalDate":{"dataType":"datetime","required":true},"incrementBy":{"dataType":"double","required":true},"period":{"ref":"Period","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "SetSecureStorageForKeyRequestBody": {
-        "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"value":{"dataType":"string","required":true}},"validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "SetSecretForKeyRequestBody": {
         "dataType": "refAlias",
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"value":{"dataType":"string","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "QueueRequestBody": {
+    "PublishMessageResponse": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"id":{"dataType":"string","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "PublishMessageParams": {
         "dataType": "refAlias",
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"message":{"dataType":"string","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "ValidateSecretRequestBody": {
+    "ValidateSecretResponse": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"valid":{"dataType":"boolean","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ValidateSecretParams": {
         "dataType": "refAlias",
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"secret":{"dataType":"string","required":true}},"validators":{}},
     },
@@ -77,12 +85,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "WriteLogRequestBody": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"error":{"dataType":"union","subSchemas":[{"dataType":"string"},{"ref":"Record_string.unknown_"}]},"message":{"dataType":"string"},"method":{"ref":"LogMethods","required":true}},"validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "SetEnvironmentVariableForKeyRequestBody": {
-        "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"value":{"ref":"JsonValue","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"error":{"dataType":"union","subSchemas":[{"dataType":"string"},{"ref":"Record_string.unknown_"}]},"message":{"dataType":"string","required":true},"method":{"ref":"LogMethods","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
@@ -175,7 +178,7 @@ export function RegisterRoutes(app: Router) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     accessToken: {"in":"header","name":"x-monday-access-token","required":true,"dataType":"string"},
                     key: {"in":"path","name":"key","required":true,"dataType":"string"},
-                    body: {"in":"body","name":"body","required":true,"ref":"SetStorageForKeyRequestBody"},
+                    body: {"in":"body","name":"body","required":true,"ref":"JsonDataContract"},
                     shared: {"in":"query","name":"shared","dataType":"boolean"},
                     previousVersion: {"in":"query","name":"previousVersion","dataType":"string"},
             };
@@ -300,7 +303,7 @@ export function RegisterRoutes(app: Router) {
             async function SecureStorageController_updateSecureValue(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     key: {"in":"path","name":"key","required":true,"dataType":"string"},
-                    body: {"in":"body","name":"body","required":true,"ref":"SetSecureStorageForKeyRequestBody"},
+                    body: {"in":"body","name":"body","required":true,"ref":"JsonDataContract"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -421,7 +424,7 @@ export function RegisterRoutes(app: Router) {
 
             async function QueueController_publishMessage(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    body: {"in":"body","name":"body","required":true,"ref":"QueueRequestBody"},
+                    body: {"in":"body","name":"body","required":true,"ref":"PublishMessageParams"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -451,7 +454,7 @@ export function RegisterRoutes(app: Router) {
 
             async function QueueController_validateSecret(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    body: {"in":"body","name":"body","required":true,"ref":"ValidateSecretRequestBody"},
+                    body: {"in":"body","name":"body","required":true,"ref":"ValidateSecretParams"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -572,7 +575,7 @@ export function RegisterRoutes(app: Router) {
             async function EnvironmentVariablesTestController_setEnvironmentForKey(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     name: {"in":"path","name":"name","required":true,"dataType":"string"},
-                    body: {"in":"body","name":"body","required":true,"ref":"SetEnvironmentVariableForKeyRequestBody"},
+                    body: {"in":"body","name":"body","required":true,"ref":"JsonDataContract"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
