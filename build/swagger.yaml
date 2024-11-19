@@ -94,6 +94,8 @@ components:
       description: Construct a type with a set of properties K of type T
     WriteLogRequestBody:
       properties:
+        payload:
+          $ref: "#/components/schemas/Record_string.unknown_"
         error:
           anyOf:
             - type: string
