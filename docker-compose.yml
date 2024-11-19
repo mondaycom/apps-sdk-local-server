@@ -5,12 +5,12 @@ services:
     platform: linux/x86_64
     user: node
     volumes:
-      - <VOLUME_FOR_LOCAL_SERVER_IN_LOCAL_MACHINE>:/app/volumes #- /Users/dorsh/temp/local-volumes:/app/volumes # Example for local volume mapping
+      - /Users/orila/temp/local-volumes:/app/volumes #- /Users/dorsh/temp/local-volumes:/app/volumes # Example for local volume mapping
     working_dir: /app
     environment:
-      - VOLUME_PATH=<VOLUME_FOR_LOCAL_SERVER_IN_LOCAL_MACHINE> # Add the same path as the volume path (line 7)
+      - VOLUME_PATH=/Users/orila/temp/local-volumes # Add the same path as the volume path (line 7)
       - PUB_SUB_DEV_APP_SERVICE_URL=https://123xyz.apps-tunnel.monday.app # Change to your exposed server URL
-      - PUB_SUB_RETRY_INTERVAL_IN_SECONDS=60 # Time in seconds to retry failed requests to the local server from the queue
+      - PUB_SUB_RETRY_INTERVAL_IN_SECONDS=6 # Time in seconds to retry failed requests to the local server from the queue
       - NODE_TLS_REJECT_UNAUTHORIZED=0 # Required for local development
     ports:
       - '59999:3000'
