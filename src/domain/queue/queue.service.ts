@@ -94,7 +94,7 @@ export class QueueService {
   static publishMessage(message: string) {
     validateAppServiceUrl();
     const { taskId, task } = createNewTask(message);
-    const job = new SimpleIntervalJob({ seconds: QUEUE_RETRY_INTERVAL_IN_SECONDS }, task, {
+    const job = new SimpleIntervalJob({ seconds: QUEUE_RETRY_INTERVAL_IN_SECONDS, runImmediately: true }, task, {
       id: taskId,
       preventOverrun: true
     });
