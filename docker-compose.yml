@@ -5,7 +5,8 @@ services:
     platform: linux/x86_64
     user: node
     volumes:
-      - <VOLUME_FOR_LOCAL_SERVER_IN_LOCAL_MACHINE>:/app/volumes #- ~/temp/local-volumes:/app/volumes # Example for local volume mapping    working_dir: /app
+      - <VOLUME_FOR_LOCAL_SERVER_IN_LOCAL_MACHINE>:/app/volumes #- ~/temp/local-volumes:/app/volumes # Example for local volume mapping
+    working_dir: /app
     environment:
       - VOLUME_PATH=<VOLUME_FOR_LOCAL_SERVER_IN_LOCAL_MACHINE> # Add the same path as the volume path (line 7)
       - PUB_SUB_DEV_APP_SERVICE_URL=https://123xyz.apps-tunnel.monday.app # Change to your exposed server URL
