@@ -13,7 +13,7 @@ export class LogsController {
   @OperationId('writeLog')
   @SuccessResponse(StatusCodes.NO_CONTENT, ReasonPhrases.NO_CONTENT)
   public async writeLog(@Body() body: WriteLogRequestBody): Promise<void> {
-    const { message, method, error } = body;
-    UserLogsService.log(method, message, error);
+    const { message, method, error, payload } = body;
+    UserLogsService.log(method, message, error, payload);
   }
 }
