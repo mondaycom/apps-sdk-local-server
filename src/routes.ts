@@ -235,6 +235,40 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.get('/storage/search/:term',
+            ...(fetchMiddlewares<RequestHandler>(StorageController)),
+            ...(fetchMiddlewares<RequestHandler>(StorageController.prototype.searchRecords)),
+
+            async function StorageController_searchRecords(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    term: {"in":"path","name":"term","required":true,"dataType":"string"},
+                    accessToken: {"in":"header","name":"x-monday-access-token","required":true,"dataType":"string"},
+                    notFoundResponse: {"in":"res","name":"404","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"reason":{"dataType":"string","required":true}}},
+                    serverError: {"in":"res","name":"500","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"reason":{"dataType":"string"}}},
+                    cursor: {"in":"query","name":"cursor","dataType":"string"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new StorageController();
+
+              await templateService.apiHandler({
+                methodName: 'searchRecords',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.get('/secure-storage/:key',
             ...(fetchMiddlewares<RequestHandler>(SecureStorageController)),
             ...(fetchMiddlewares<RequestHandler>(SecureStorageController.prototype.getSecureValue)),

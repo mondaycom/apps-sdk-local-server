@@ -11,6 +11,9 @@ import type {
   IStorageInstance,
   Options,
   Period,
+  SearchOptions,
+  SearchResponse,
+  SearchServerResponse,
   SetResponse
 } from 'types/storage.type';
 
@@ -74,5 +77,23 @@ export class StorageService extends BaseStorage implements IStorageInstance {
         return { error: 'unknown error occurred', success: false };
       }
     }
+  }
+
+  async search<T extends JsonDataContract['value']>(
+    key: string,
+    options: SearchOptions = {}
+  ): Promise<SearchResponse<T>> {
+    const url = this.searchUrl(key, options);
+    const params = { method: 'GET' };
+    const result = await this.storageFetchV2<SearchServerResponse<T>>(url, params);
+    if (!isDefined(result)) {
+      return { success: false, records: null };
+    }
+
+    const response: SearchResponse<T> = { success: true, records: result.records };
+    if (result.cursor) {
+      response.cursor = result.cursor;
+    }
+    return response;
   }
 }

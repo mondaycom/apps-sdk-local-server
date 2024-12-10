@@ -67,3 +67,23 @@ export type ErrorResponse =
     }
   | undefined
   | null;
+
+export type SearchOptions = {
+  cursor?: string;
+};
+
+export type SearchEntity<T extends JsonDataContract['value']> = {
+  key: string;
+  value: T;
+  backendOnly: boolean;
+};
+
+export type SearchServerResponse<T extends JsonDataContract['value']> = {
+  records: Array<SearchEntity<T>> | null;
+  cursor?: string;
+};
+
+export type SearchResponse<T extends JsonDataContract['value']> = {
+  success: boolean;
+  error?: string;
+} & SearchServerResponse<T>;

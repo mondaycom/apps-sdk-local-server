@@ -3,7 +3,7 @@ import { isDefined } from 'types/type-guards';
 import { fetchWrapper } from 'utils/fetch-wrapper';
 import { Logger } from 'utils/logger';
 
-import type { Options, RequestOptions, Token } from 'types/storage.type';
+import type { Options, RequestOptions, SearchOptions, Token } from 'types/storage.type';
 
 export abstract class BaseStorage {
   protected logger: Logger;
@@ -79,6 +79,13 @@ export abstract class BaseStorage {
     const storageUrl = this.getStorageUrl();
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     const fullPath = `${storageUrl}/${key}?shareGlobally=${shareGlobally}`;
+    return fullPath;
+  }
+
+  public searchUrl(key: string, options: SearchOptions) {
+    const storageUrl = this.getStorageUrlV2();
+    const cursor = options.cursor ? `&cursor=${options.cursor}` : '';
+    const fullPath = `${storageUrl}/items?term=${key}${cursor}`;
     return fullPath;
   }
 }

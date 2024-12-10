@@ -70,4 +70,28 @@ export class StorageController {
     const result = await storageService.incrementCounter(period, { incrementBy, kind, renewalDate });
     return result;
   }
+
+  @Get('search/{term}')
+  @OperationId('searchRecord')
+  @SuccessResponse(StatusCodes.OK, ReasonPhrases.OK)
+  public async searchRecords(
+    @Path() term: string,
+    @Header('x-monday-access-token') accessToken: string,
+    @Res() notFoundResponse: TsoaResponse<StatusCodes.NOT_FOUND, { reason: string }>,
+    @Res() serverError: TsoaResponse<StatusCodes.INTERNAL_SERVER_ERROR, { reason?: string }>,
+    @Query() cursor?: string
+  ) {
+    const storageService = new StorageService(accessToken);
+    const result = await storageService.search(term, { cursor });
+    const { success, records } = result;
+    if (!success && records === null) {
+      return notFoundResponse(StatusCodes.NOT_FOUND, { reason: 'Key not found' });
+    }
+
+    if (!success) {
+      return serverError(StatusCodes.INTERNAL_SERVER_ERROR, { reason: 'An error occurred while fetching the key' });
+    }
+
+    return result;
+  }
 }
