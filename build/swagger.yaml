@@ -295,6 +295,54 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/IncrementStorageForKeyRequestBody"
+  /storage/search/{term}:
+    get:
+      operationId: searchRecord
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: {}
+        "404":
+          description: ""
+          content:
+            application/json:
+              schema:
+                properties:
+                  reason:
+                    type: string
+                required:
+                  - reason
+                type: object
+        "500":
+          description: ""
+          content:
+            application/json:
+              schema:
+                properties:
+                  reason:
+                    type: string
+                type: object
+      tags:
+        - Storage
+      security: []
+      parameters:
+        - in: path
+          name: term
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: x-monday-access-token
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: cursor
+          required: false
+          schema:
+            type: string
   /secure-storage/{key}:
     get:
       operationId: getSecureStorage
