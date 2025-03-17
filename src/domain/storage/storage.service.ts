@@ -2,7 +2,7 @@ import { isDefined } from 'types/type-guards';
 
 import { BaseStorage } from './base-storage';
 
-import type { JsonValue } from 'types/general.type';
+import type { JsonDataContract } from 'types/general.type';
 import type {
   CounterOptions,
   CounterResponse,
@@ -11,6 +11,9 @@ import type {
   IStorageInstance,
   Options,
   Period,
+  SearchOptions,
+  SearchResponse,
+  SearchServerResponse,
   SetResponse
 } from 'types/storage.type';
 
@@ -37,7 +40,7 @@ export class StorageService extends BaseStorage implements IStorageInstance {
     }
   }
 
-  async get<T extends JsonValue>(key: string) {
+  async get<T extends JsonDataContract['value']>(key: string) {
     const result = await this.storageFetch<GetServerResponse<T>>(key, { method: 'GET' });
     if (!isDefined(result)) {
       return { success: false, value: null };
@@ -48,7 +51,7 @@ export class StorageService extends BaseStorage implements IStorageInstance {
     return { success: true, value, version };
   }
 
-  async set<T extends JsonValue>(key: string, value: T, options: Options = {}) {
+  async set<T extends JsonDataContract['value']>(key: string, value: T, options: Options = {}) {
     const { previousVersion, ttl } = options;
 
     const result = await this.storageFetch<SetResponse>(
@@ -75,5 +78,23 @@ export class StorageService extends BaseStorage implements IStorageInstance {
         return { error: 'unknown error occurred', success: false };
       }
     }
+  }
+
+  async search<T extends JsonDataContract['value']>(
+    key: string,
+    options: SearchOptions = {}
+  ): Promise<SearchResponse<T>> {
+    const url = this.searchUrl(key, options);
+    const params = { method: 'GET' };
+    const result = await this.storageFetchV2<SearchServerResponse<T>>(url, params);
+    if (!isDefined(result)) {
+      return { success: false, records: null };
+    }
+
+    const response: SearchResponse<T> = { success: true, records: result.records };
+    if (result.cursor) {
+      response.cursor = result.cursor;
+    }
+    return response;
   }
 }

@@ -5,8 +5,8 @@ import { Body, Delete, Get, Path, Put, Route, Tags } from 'tsoa';
 import { StorageService } from './storage.service';
 
 import type { TsoaResponse } from '@tsoa/runtime';
-import type { IncrementStorageForKeyRequestBody, SetStorageForKeyRequestBody } from 'domain/storage/storage.types';
-import type { JsonValue } from 'types/general.type';
+import type { IncrementStorageForKeyRequestBody, StorageDataContract } from 'domain/storage/storage.types';
+import type { JsonDataContract } from 'types/general.type';
 
 @Route('storage')
 @Tags('Storage')
@@ -20,7 +20,7 @@ export class StorageController {
     @Header('x-monday-access-token') accessToken: string,
     @Res() notFoundResponse: TsoaResponse<StatusCodes.NOT_FOUND, { reason: string }>,
     @Res() serverError: TsoaResponse<StatusCodes.INTERNAL_SERVER_ERROR, { reason?: string }>
-  ): Promise<{ value: JsonValue; version?: string }> {
+  ): Promise<StorageDataContract> {
     const storageService = new StorageService(accessToken);
     const { value, version, success } = await storageService.get(key);
     if (!success && value === null) {
@@ -48,7 +48,7 @@ export class StorageController {
   public async updateValue(
     @Header('x-monday-access-token') accessToken: string,
     @Path() key: string,
-    @Body() body: SetStorageForKeyRequestBody,
+    @Body() body: JsonDataContract,
     @Query() shared?: boolean,
     @Query() previousVersion?: string,
     @Query() ttl?: number
@@ -69,6 +69,30 @@ export class StorageController {
     const { period, incrementBy, renewalDate, kind } = body;
     const storageService = new StorageService(accessToken);
     const result = await storageService.incrementCounter(period, { incrementBy, kind, renewalDate });
+    return result;
+  }
+
+  @Get('search/{term}')
+  @OperationId('searchRecord')
+  @SuccessResponse(StatusCodes.OK, ReasonPhrases.OK)
+  public async searchRecords(
+    @Path() term: string,
+    @Header('x-monday-access-token') accessToken: string,
+    @Res() notFoundResponse: TsoaResponse<StatusCodes.NOT_FOUND, { reason: string }>,
+    @Res() serverError: TsoaResponse<StatusCodes.INTERNAL_SERVER_ERROR, { reason?: string }>,
+    @Query() cursor?: string
+  ) {
+    const storageService = new StorageService(accessToken);
+    const result = await storageService.search(term, { cursor });
+    const { success, records } = result;
+    if (!success && records === null) {
+      return notFoundResponse(StatusCodes.NOT_FOUND, { reason: 'Key not found' });
+    }
+
+    if (!success) {
+      return serverError(StatusCodes.INTERNAL_SERVER_ERROR, { reason: 'An error occurred while fetching the key' });
+    }
+
     return result;
   }
 }

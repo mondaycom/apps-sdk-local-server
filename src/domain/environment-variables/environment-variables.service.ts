@@ -1,7 +1,7 @@
 import { ENVIRONMENT_VARIABLES_FILE } from 'domain/environment-variables/environment-variables.consts';
 import { initFileIfNotExists, readJsonFile, writeJsonFile } from 'utils/files';
 
-import type { JsonValue } from 'types/general.type';
+import type { JsonDataContract } from 'types/general.type';
 
 export class EnvironmentVariablesService {
   private static isInitialized = false;
@@ -21,7 +21,7 @@ export class EnvironmentVariablesService {
     return environmentFile[key];
   }
 
-  static setEnvironmentVariableForKey(key: string, value: JsonValue) {
+  static setEnvironmentVariableForKey(key: string, value: JsonDataContract['value']) {
     this.initialize();
     const environmentFile = readJsonFile(ENVIRONMENT_VARIABLES_FILE);
     environmentFile[key] = value;

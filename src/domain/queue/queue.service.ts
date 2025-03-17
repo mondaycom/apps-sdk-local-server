@@ -44,7 +44,7 @@ const createNewTask = (message: string) => {
       const response = await fetch(`${APP_SERVICE_URL}/${APP_SERVICE_QUEUE_ENDPOINT}?secret=${taskSecret}`, {
         method: 'POST',
 
-        body: JSON.stringify({ message }),
+        body: JSON.stringify({ content: message }),
         headers: { 'Content-Type': 'application/json' }
       });
 
@@ -94,7 +94,7 @@ export class QueueService {
   static publishMessage(message: string) {
     validateAppServiceUrl();
     const { taskId, task } = createNewTask(message);
-    const job = new SimpleIntervalJob({ seconds: QUEUE_RETRY_INTERVAL_IN_SECONDS }, task, {
+    const job = new SimpleIntervalJob({ seconds: QUEUE_RETRY_INTERVAL_IN_SECONDS, runImmediately: true }, task, {
       id: taskId,
       preventOverrun: true
     });

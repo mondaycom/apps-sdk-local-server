@@ -12,7 +12,7 @@ export class SecretsController {
   @Get('{name}')
   @OperationId('getSecret')
   @SuccessResponse(StatusCodes.OK, ReasonPhrases.OK)
-  public getSecretForKey(
+  public async getSecretForKey(
     @Path() name: string,
     @Res()
     notFoundResponse: TsoaResponse<
@@ -21,7 +21,7 @@ export class SecretsController {
         reason: string;
       }
     >
-  ): string {
+  ): Promise<string> {
     const secret = SecretService.getSecretForKey(name);
     if (!secret) {
       return notFoundResponse(StatusCodes.NOT_FOUND, { reason: 'Secret not found' });
