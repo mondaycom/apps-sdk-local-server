@@ -171,6 +171,7 @@ export function RegisterRoutes(app: Router) {
                     body: {"in":"body","name":"body","required":true,"ref":"SetStorageForKeyRequestBody"},
                     shared: {"in":"query","name":"shared","dataType":"boolean"},
                     previousVersion: {"in":"query","name":"previousVersion","dataType":"string"},
+                    ttl: {"in":"query","name":"ttl","dataType":"double"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

@@ -249,6 +249,12 @@ paths:
           required: false
           schema:
             type: string
+        - in: query
+          name: ttl
+          required: false
+          schema:
+            format: double
+            type: number
       requestBody:
         required: true
         content:

@@ -50,11 +50,12 @@ export class StorageController {
     @Path() key: string,
     @Body() body: SetStorageForKeyRequestBody,
     @Query() shared?: boolean,
-    @Query() previousVersion?: string
+    @Query() previousVersion?: string,
+    @Query() ttl?: number
   ) {
     const { value } = body;
     const storageService = new StorageService(accessToken);
-    const result = await storageService.set(key, value, { previousVersion, shared });
+    const result = await storageService.set(key, value, { previousVersion, shared, ttl });
     return result;
   }
 
