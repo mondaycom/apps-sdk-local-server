@@ -89,20 +89,27 @@ const models: TsoaRoute.Models = {
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
-const templateService = new ExpressTemplateService(models, {"noImplicitAdditionalProperties":"throw-on-extras"});
+const templateService = new ExpressTemplateService(models, {"noImplicitAdditionalProperties":"throw-on-extras","bodyCoercion":true});
 
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
+
+
+
 export function RegisterRoutes(app: Router) {
+
     // ###########################################################################################################
     //  NOTE: If you do not see routes for all of your controllers in this file, then you might not have informed tsoa of where to look
     //      Please look into the "controllerPathGlobs" config option described in the readme: https://github.com/lukeautry/tsoa
     // ###########################################################################################################
+
+
+    
         app.get('/storage/:key',
             ...(fetchMiddlewares<RequestHandler>(StorageController)),
             ...(fetchMiddlewares<RequestHandler>(StorageController.prototype.getValue)),
 
-            function StorageController_getValue(request: ExRequest, response: ExResponse, next: any) {
+            async function StorageController_getValue(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     key: {"in":"path","name":"key","required":true,"dataType":"string"},
                     shared: {"in":"query","name":"shared","required":true,"dataType":"boolean"},
@@ -119,7 +126,7 @@ export function RegisterRoutes(app: Router) {
 
                 const controller = new StorageController();
 
-              templateService.apiHandler({
+              await templateService.apiHandler({
                 methodName: 'getValue',
                 controller,
                 response,
@@ -136,7 +143,7 @@ export function RegisterRoutes(app: Router) {
             ...(fetchMiddlewares<RequestHandler>(StorageController)),
             ...(fetchMiddlewares<RequestHandler>(StorageController.prototype.deleteValue)),
 
-            function StorageController_deleteValue(request: ExRequest, response: ExResponse, next: any) {
+            async function StorageController_deleteValue(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     accessToken: {"in":"header","name":"x-monday-access-token","required":true,"dataType":"string"},
                     key: {"in":"path","name":"key","required":true,"dataType":"string"},
@@ -150,7 +157,7 @@ export function RegisterRoutes(app: Router) {
 
                 const controller = new StorageController();
 
-              templateService.apiHandler({
+              await templateService.apiHandler({
                 methodName: 'deleteValue',
                 controller,
                 response,
@@ -167,7 +174,7 @@ export function RegisterRoutes(app: Router) {
             ...(fetchMiddlewares<RequestHandler>(StorageController)),
             ...(fetchMiddlewares<RequestHandler>(StorageController.prototype.updateValue)),
 
-            function StorageController_updateValue(request: ExRequest, response: ExResponse, next: any) {
+            async function StorageController_updateValue(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     accessToken: {"in":"header","name":"x-monday-access-token","required":true,"dataType":"string"},
                     key: {"in":"path","name":"key","required":true,"dataType":"string"},
@@ -185,7 +192,7 @@ export function RegisterRoutes(app: Router) {
 
                 const controller = new StorageController();
 
-              templateService.apiHandler({
+              await templateService.apiHandler({
                 methodName: 'updateValue',
                 controller,
                 response,
@@ -202,7 +209,7 @@ export function RegisterRoutes(app: Router) {
             ...(fetchMiddlewares<RequestHandler>(StorageController)),
             ...(fetchMiddlewares<RequestHandler>(StorageController.prototype.counterIncrement)),
 
-            function StorageController_counterIncrement(request: ExRequest, response: ExResponse, next: any) {
+            async function StorageController_counterIncrement(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     accessToken: {"in":"header","name":"x-monday-access-token","required":true,"dataType":"string"},
                     body: {"in":"body","name":"body","required":true,"ref":"IncrementStorageForKeyRequestBody"},
@@ -216,7 +223,7 @@ export function RegisterRoutes(app: Router) {
 
                 const controller = new StorageController();
 
-              templateService.apiHandler({
+              await templateService.apiHandler({
                 methodName: 'counterIncrement',
                 controller,
                 response,
@@ -233,7 +240,7 @@ export function RegisterRoutes(app: Router) {
             ...(fetchMiddlewares<RequestHandler>(StorageController)),
             ...(fetchMiddlewares<RequestHandler>(StorageController.prototype.searchRecords)),
 
-            function StorageController_searchRecords(request: ExRequest, response: ExResponse, next: any) {
+            async function StorageController_searchRecords(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     term: {"in":"path","name":"term","required":true,"dataType":"string"},
                     accessToken: {"in":"header","name":"x-monday-access-token","required":true,"dataType":"string"},
@@ -250,7 +257,7 @@ export function RegisterRoutes(app: Router) {
 
                 const controller = new StorageController();
 
-              templateService.apiHandler({
+              await templateService.apiHandler({
                 methodName: 'searchRecords',
                 controller,
                 response,
@@ -267,7 +274,7 @@ export function RegisterRoutes(app: Router) {
             ...(fetchMiddlewares<RequestHandler>(SecureStorageController)),
             ...(fetchMiddlewares<RequestHandler>(SecureStorageController.prototype.getSecureValue)),
 
-            function SecureStorageController_getSecureValue(request: ExRequest, response: ExResponse, next: any) {
+            async function SecureStorageController_getSecureValue(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     key: {"in":"path","name":"key","required":true,"dataType":"string"},
                     notFoundResponse: {"in":"res","name":"404","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"reason":{"dataType":"string","required":true}}},
@@ -281,7 +288,7 @@ export function RegisterRoutes(app: Router) {
 
                 const controller = new SecureStorageController();
 
-              templateService.apiHandler({
+              await templateService.apiHandler({
                 methodName: 'getSecureValue',
                 controller,
                 response,
@@ -298,7 +305,7 @@ export function RegisterRoutes(app: Router) {
             ...(fetchMiddlewares<RequestHandler>(SecureStorageController)),
             ...(fetchMiddlewares<RequestHandler>(SecureStorageController.prototype.deleteSecureValue)),
 
-            function SecureStorageController_deleteSecureValue(request: ExRequest, response: ExResponse, next: any) {
+            async function SecureStorageController_deleteSecureValue(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     key: {"in":"path","name":"key","required":true,"dataType":"string"},
             };
@@ -311,7 +318,7 @@ export function RegisterRoutes(app: Router) {
 
                 const controller = new SecureStorageController();
 
-              templateService.apiHandler({
+              await templateService.apiHandler({
                 methodName: 'deleteSecureValue',
                 controller,
                 response,
@@ -328,7 +335,7 @@ export function RegisterRoutes(app: Router) {
             ...(fetchMiddlewares<RequestHandler>(SecureStorageController)),
             ...(fetchMiddlewares<RequestHandler>(SecureStorageController.prototype.updateSecureValue)),
 
-            function SecureStorageController_updateSecureValue(request: ExRequest, response: ExResponse, next: any) {
+            async function SecureStorageController_updateSecureValue(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     key: {"in":"path","name":"key","required":true,"dataType":"string"},
                     body: {"in":"body","name":"body","required":true,"ref":"JsonDataContract"},
@@ -342,7 +349,7 @@ export function RegisterRoutes(app: Router) {
 
                 const controller = new SecureStorageController();
 
-              templateService.apiHandler({
+              await templateService.apiHandler({
                 methodName: 'updateSecureValue',
                 controller,
                 response,
@@ -359,7 +366,7 @@ export function RegisterRoutes(app: Router) {
             ...(fetchMiddlewares<RequestHandler>(SecretsController)),
             ...(fetchMiddlewares<RequestHandler>(SecretsController.prototype.getSecretForKey)),
 
-            function SecretsController_getSecretForKey(request: ExRequest, response: ExResponse, next: any) {
+            async function SecretsController_getSecretForKey(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     name: {"in":"path","name":"name","required":true,"dataType":"string"},
                     notFoundResponse: {"in":"res","name":"404","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"reason":{"dataType":"string","required":true}}},
@@ -373,7 +380,7 @@ export function RegisterRoutes(app: Router) {
 
                 const controller = new SecretsController();
 
-              templateService.apiHandler({
+              await templateService.apiHandler({
                 methodName: 'getSecretForKey',
                 controller,
                 response,
@@ -390,7 +397,7 @@ export function RegisterRoutes(app: Router) {
             ...(fetchMiddlewares<RequestHandler>(SecretsController)),
             ...(fetchMiddlewares<RequestHandler>(SecretsController.prototype.getKeys)),
 
-            function SecretsController_getKeys(request: ExRequest, response: ExResponse, next: any) {
+            async function SecretsController_getKeys(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
             };
 
@@ -402,7 +409,7 @@ export function RegisterRoutes(app: Router) {
 
                 const controller = new SecretsController();
 
-              templateService.apiHandler({
+              await templateService.apiHandler({
                 methodName: 'getKeys',
                 controller,
                 response,
@@ -419,7 +426,7 @@ export function RegisterRoutes(app: Router) {
             ...(fetchMiddlewares<RequestHandler>(SecretsTestController)),
             ...(fetchMiddlewares<RequestHandler>(SecretsTestController.prototype.setSecretForKey)),
 
-            function SecretsTestController_setSecretForKey(request: ExRequest, response: ExResponse, next: any) {
+            async function SecretsTestController_setSecretForKey(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     name: {"in":"path","name":"name","required":true,"dataType":"string"},
                     body: {"in":"body","name":"body","required":true,"ref":"SetSecretForKeyRequestBody"},
@@ -433,7 +440,7 @@ export function RegisterRoutes(app: Router) {
 
                 const controller = new SecretsTestController();
 
-              templateService.apiHandler({
+              await templateService.apiHandler({
                 methodName: 'setSecretForKey',
                 controller,
                 response,
@@ -450,7 +457,7 @@ export function RegisterRoutes(app: Router) {
             ...(fetchMiddlewares<RequestHandler>(QueueController)),
             ...(fetchMiddlewares<RequestHandler>(QueueController.prototype.publishMessage)),
 
-            function QueueController_publishMessage(request: ExRequest, response: ExResponse, next: any) {
+            async function QueueController_publishMessage(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     body: {"in":"body","name":"body","required":true,"ref":"PublishMessageParams"},
             };
@@ -463,7 +470,7 @@ export function RegisterRoutes(app: Router) {
 
                 const controller = new QueueController();
 
-              templateService.apiHandler({
+              await templateService.apiHandler({
                 methodName: 'publishMessage',
                 controller,
                 response,
@@ -480,7 +487,7 @@ export function RegisterRoutes(app: Router) {
             ...(fetchMiddlewares<RequestHandler>(QueueController)),
             ...(fetchMiddlewares<RequestHandler>(QueueController.prototype.validateSecret)),
 
-            function QueueController_validateSecret(request: ExRequest, response: ExResponse, next: any) {
+            async function QueueController_validateSecret(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     body: {"in":"body","name":"body","required":true,"ref":"ValidateSecretParams"},
             };
@@ -493,7 +500,7 @@ export function RegisterRoutes(app: Router) {
 
                 const controller = new QueueController();
 
-              templateService.apiHandler({
+              await templateService.apiHandler({
                 methodName: 'validateSecret',
                 controller,
                 response,
@@ -510,7 +517,7 @@ export function RegisterRoutes(app: Router) {
             ...(fetchMiddlewares<RequestHandler>(LogsController)),
             ...(fetchMiddlewares<RequestHandler>(LogsController.prototype.writeLog)),
 
-            function LogsController_writeLog(request: ExRequest, response: ExResponse, next: any) {
+            async function LogsController_writeLog(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     body: {"in":"body","name":"body","required":true,"ref":"WriteLogRequestBody"},
             };
@@ -523,7 +530,7 @@ export function RegisterRoutes(app: Router) {
 
                 const controller = new LogsController();
 
-              templateService.apiHandler({
+              await templateService.apiHandler({
                 methodName: 'writeLog',
                 controller,
                 response,
@@ -540,7 +547,7 @@ export function RegisterRoutes(app: Router) {
             ...(fetchMiddlewares<RequestHandler>(EnvironmentVariablesController)),
             ...(fetchMiddlewares<RequestHandler>(EnvironmentVariablesController.prototype.getEnvironmentVariableForKey)),
 
-            function EnvironmentVariablesController_getEnvironmentVariableForKey(request: ExRequest, response: ExResponse, next: any) {
+            async function EnvironmentVariablesController_getEnvironmentVariableForKey(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     name: {"in":"path","name":"name","required":true,"dataType":"string"},
                     notFoundResponse: {"in":"res","name":"404","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"reason":{"dataType":"string","required":true}}},
@@ -554,7 +561,7 @@ export function RegisterRoutes(app: Router) {
 
                 const controller = new EnvironmentVariablesController();
 
-              templateService.apiHandler({
+              await templateService.apiHandler({
                 methodName: 'getEnvironmentVariableForKey',
                 controller,
                 response,
@@ -571,7 +578,7 @@ export function RegisterRoutes(app: Router) {
             ...(fetchMiddlewares<RequestHandler>(EnvironmentVariablesController)),
             ...(fetchMiddlewares<RequestHandler>(EnvironmentVariablesController.prototype.getKeys)),
 
-            function EnvironmentVariablesController_getKeys(request: ExRequest, response: ExResponse, next: any) {
+            async function EnvironmentVariablesController_getKeys(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
             };
 
@@ -583,7 +590,7 @@ export function RegisterRoutes(app: Router) {
 
                 const controller = new EnvironmentVariablesController();
 
-              templateService.apiHandler({
+              await templateService.apiHandler({
                 methodName: 'getKeys',
                 controller,
                 response,
@@ -600,7 +607,7 @@ export function RegisterRoutes(app: Router) {
             ...(fetchMiddlewares<RequestHandler>(EnvironmentVariablesTestController)),
             ...(fetchMiddlewares<RequestHandler>(EnvironmentVariablesTestController.prototype.setEnvironmentForKey)),
 
-            function EnvironmentVariablesTestController_setEnvironmentForKey(request: ExRequest, response: ExResponse, next: any) {
+            async function EnvironmentVariablesTestController_setEnvironmentForKey(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     name: {"in":"path","name":"name","required":true,"dataType":"string"},
                     body: {"in":"body","name":"body","required":true,"ref":"JsonDataContract"},
@@ -614,7 +621,7 @@ export function RegisterRoutes(app: Router) {
 
                 const controller = new EnvironmentVariablesTestController();
 
-              templateService.apiHandler({
+              await templateService.apiHandler({
                 methodName: 'setEnvironmentForKey',
                 controller,
                 response,
