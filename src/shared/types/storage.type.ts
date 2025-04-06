@@ -18,6 +18,7 @@ export type RequestOptions = {
 export type Options = {
   shared?: boolean;
   previousVersion?: string;
+  ttl?: number;
 };
 
 export type Token = string;

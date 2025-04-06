@@ -52,7 +52,7 @@ export class StorageService extends BaseStorage implements IStorageInstance {
   }
 
   async set<T extends JsonDataContract['value']>(key: string, value: T, options: Options = {}) {
-    const { previousVersion } = options;
+    const { previousVersion, ttl } = options;
 
     const result = await this.storageFetch<SetResponse>(
       key,
@@ -61,7 +61,8 @@ export class StorageService extends BaseStorage implements IStorageInstance {
         body: {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           value,
-          ...(previousVersion && { previous_version: previousVersion })
+          ...(previousVersion && { previous_version: previousVersion }),
+          ...(ttl && { ttl })
         }
       },
       options
