@@ -9,6 +9,7 @@ import * as swaggerUI from 'swagger-ui-express';
 import YAML from 'yamljs';
 
 import { errorHandler } from 'middlewares/error.middleware';
+import { multerErrorHandler } from 'middlewares/multer-error.middleware';
 import { notFoundHandler } from 'middlewares/not-found.middleware';
 import { PORT } from 'shared/config';
 import { Logger } from 'utils/logger';
@@ -29,6 +30,9 @@ app.use(
   swaggerUI.serve,
   swaggerUI.setup(YAML.load(join(appRoot.toString(), 'build/swagger.yaml')))
 );
+
+// Handle multer file size limit errors
+app.use(multerErrorHandler);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

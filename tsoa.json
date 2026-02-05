@@ -29,6 +29,12 @@
     }
   },
   "routes": {
-    "routesDir": "./src"
+    "routesDir": "./src",
+    "esm": true
+  },
+  "multerOpts": {
+    "limits": {
+      "fileSize": 33554432
+    }
   }
 }
