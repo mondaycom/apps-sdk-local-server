@@ -80,6 +80,84 @@ components:
       required:
         - secret
       type: object
+    BaseResponse:
+      properties:
+        error:
+          type: string
+        success:
+          type: boolean
+      required:
+        - success
+      type: object
+    UploadFileResponse:
+      allOf:
+        - $ref: "#/components/schemas/BaseResponse"
+        - properties:
+            fileUrl:
+              type: string
+            fileName:
+              type: string
+          type: object
+    DownloadFileResponse:
+      allOf:
+        - $ref: "#/components/schemas/BaseResponse"
+        - properties:
+            contentType:
+              type: string
+            content:
+              type: string
+              format: byte
+          type: object
+    DeleteFileResponse:
+      $ref: "#/components/schemas/BaseResponse"
+    Record_string.string_:
+      properties: {}
+      additionalProperties:
+        type: string
+      type: object
+      description: Construct a type with a set of properties K of type T
+    FileInfo:
+      properties:
+        metadata:
+          $ref: "#/components/schemas/Record_string.string_"
+        etag:
+          type: string
+        lastModified:
+          type: string
+          format: date-time
+        contentType:
+          type: string
+        size:
+          type: number
+          format: double
+        name:
+          type: string
+      required:
+        - metadata
+        - etag
+        - lastModified
+        - contentType
+        - size
+        - name
+      type: object
+    ListFilesResponse:
+      allOf:
+        - $ref: "#/components/schemas/BaseResponse"
+        - properties:
+            nextPageToken:
+              type: string
+            files:
+              items:
+                $ref: "#/components/schemas/FileInfo"
+              type: array
+          type: object
+    GetFileInfoResponse:
+      allOf:
+        - $ref: "#/components/schemas/BaseResponse"
+        - properties:
+            fileInfo:
+              $ref: "#/components/schemas/FileInfo"
+          type: object
     LogMethods:
       enum:
         - debug
@@ -524,6 +602,184 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/ValidateSecretParams"
+  /object-storage/files:
+    post:
+      operationId: uploadFile
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadFileResponse"
+        "400":
+          description: ""
+          content:
+            application/json:
+              schema:
+                properties:
+                  reason:
+                    type: string
+                required:
+                  - reason
+                type: object
+        "500":
+          description: ""
+          content:
+            application/json:
+              schema:
+                properties:
+                  reason:
+                    type: string
+                type: object
+      description: >-
+        Upload file with unified content parameter
+
+        This endpoint accepts all content types through a single 'content'
+        parameter
+
+        String content should be encoded as bytes and sent as file upload
+      tags:
+        - ObjectStorage
+      security: []
+      parameters: []
+      requestBody:
+        required: false
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  format: binary
+                filename:
+                  type: string
+                contentType:
+                  type: string
+                metadata:
+                  type: string
+    get:
+      operationId: listFiles
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListFilesResponse"
+        "500":
+          description: ""
+          content:
+            application/json:
+              schema:
+                properties:
+                  reason:
+                    type: string
+                type: object
+      tags:
+        - ObjectStorage
+      security: []
+      parameters:
+        - in: query
+          name: prefix
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: maxResults
+          required: false
+          schema:
+            format: double
+            type: number
+        - in: query
+          name: pageToken
+          required: false
+          schema:
+            type: string
+  /object-storage/files/{filename}:
+    get:
+      operationId: downloadFile
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DownloadFileResponse"
+        "500":
+          description: ""
+          content:
+            application/json:
+              schema:
+                properties:
+                  reason:
+                    type: string
+                type: object
+      tags:
+        - ObjectStorage
+      security: []
+      parameters:
+        - in: path
+          name: filename
+          required: true
+          schema:
+            type: string
+    delete:
+      operationId: deleteFile
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteFileResponse"
+        "500":
+          description: ""
+          content:
+            application/json:
+              schema:
+                properties:
+                  reason:
+                    type: string
+                type: object
+      tags:
+        - ObjectStorage
+      security: []
+      parameters:
+        - in: path
+          name: filename
+          required: true
+          schema:
+            type: string
+  /object-storage/files/{filename}/info:
+    get:
+      operationId: getFileInfo
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetFileInfoResponse"
+        "500":
+          description: ""
+          content:
+            application/json:
+              schema:
+                properties:
+                  reason:
+                    type: string
+                type: object
+      tags:
+        - ObjectStorage
+      security: []
+      parameters:
+        - in: path
+          name: filename
+          required: true
+          schema:
+            type: string
   /logs:
     post:
       operationId: writeLog
