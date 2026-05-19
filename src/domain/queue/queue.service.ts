@@ -22,6 +22,17 @@ const validateAppServiceUrl = () => {
   if (!appServiceUrl) {
     throw new BadRequestError('PubSub is not available - Set `APP_SERVICE_URL` in docker-compose.yml');
   }
+
+  return appServiceUrl;
+};
+
+export const buildQueueUrl = (appServiceUrl: string, taskSecret: string) => {
+  const baseUrl = appServiceUrl.endsWith('/') ? appServiceUrl : `${appServiceUrl}/`;
+  const queueEndpoint = APP_SERVICE_QUEUE_ENDPOINT.replace(/^\/+/, '');
+  const url = new URL(queueEndpoint, baseUrl);
+  url.searchParams.set('secret', taskSecret);
+
+  return url.toString();
 };
 
 const handleTaskFailure = (taskSecret: string) => {
@@ -34,14 +45,14 @@ const handleTaskFailure = (taskSecret: string) => {
   }
 };
 
-const createNewTask = (message: string) => {
+const createNewTask = (message: string, appServiceUrl: string) => {
   const taskId = uuidv4();
   const taskSecret = generateBase64Secret(taskId + randomBytes(16).toString('hex')).toString();
   storeJobIdAndSecret(taskSecret, taskId);
   const task = new AsyncTask(
     taskId,
     async () => {
-      const response = await fetch(`${APP_SERVICE_URL}/${APP_SERVICE_QUEUE_ENDPOINT}?secret=${taskSecret}`, {
+      const response = await fetch(buildQueueUrl(appServiceUrl, taskSecret), {
         method: 'POST',
 
         body: JSON.stringify({ content: message }),
@@ -92,8 +103,8 @@ const removeJobIdAndSecret = (taskSecret: string) => {
 
 export class QueueService {
   static publishMessage(message: string) {
-    validateAppServiceUrl();
-    const { taskId, task } = createNewTask(message);
+    const appServiceUrl = validateAppServiceUrl();
+    const { taskId, task } = createNewTask(message, appServiceUrl);
     const job = new SimpleIntervalJob({ seconds: QUEUE_RETRY_INTERVAL_IN_SECONDS, runImmediately: true }, task, {
       id: taskId,
       preventOverrun: true
